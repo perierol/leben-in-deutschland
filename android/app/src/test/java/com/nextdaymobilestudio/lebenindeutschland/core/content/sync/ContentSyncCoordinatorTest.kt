@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -32,7 +33,7 @@ class ContentSyncCoordinatorTest {
     }
 
     @Test
-    fun failedAuthenticationStopsTheSyncBeforeAnyRemoteRead() {
+    fun failedAuthenticationOnFirstRunStopsTheSync() {
         val fixture = remoteContentFixture()
         val remote = FakeRemoteContentDataSource(fixture)
         val local = RecordingLocalContentRepository()
@@ -46,6 +47,26 @@ class ContentSyncCoordinatorTest {
 
         assertEquals(emptyList<String>(), remote.calls)
         assertEquals(emptyList<ContentPackageSnapshot>(), local.snapshots)
+    }
+
+    @Test
+    fun failedAuthenticationFallsBackToInstalledContent() = runBlocking {
+        val fixture = remoteContentFixture()
+        val local = RecordingLocalContentRepository()
+        ContentSyncCoordinator(FakeRemoteContentDataSource(fixture), local) { 123L }
+            .synchronize("en")
+
+        val remote = FakeRemoteContentDataSource(fixture)
+        val authenticator = ContentAuthenticator { throw ContentSyncException("no session") }
+        val result = ContentSyncCoordinator(remote, local, authenticator) { 123L }
+            .synchronize("en")
+
+        assertTrue(result.usedLocalContent)
+        assertFalse(result.activated)
+        assertEquals(RELEASE_ID, result.releaseId)
+        assertEquals(listOf("de", "en"), result.installedLanguageCodes)
+        assertEquals(1, result.questionCount)
+        assertEquals(emptyList<String>(), remote.calls)
     }
 
     @Test

@@ -110,4 +110,9 @@ question catalogue and its translations from being downloaded by anyone who know
 the project ID, without asking users to create an account. Writes are refused for
 all clients; the content pipeline publishes through a service account.
 
+Anonymous sign-in is invisible: there is no sign-in screen, no credentials, and no
+prompt. If it fails — offline, without Play Services, or during an outage — a device
+that already holds the content it needs keeps working on what is installed, and only
+a first run reports the failure.
+
 The German questions and answers are treated as the authoritative source content. Translations were generated with AI and may contain errors.
