@@ -1,7 +1,6 @@
 # Leben in Deutschland
 
 [![Android CI](https://github.com/perierol/leben-in-deutschland/actions/workflows/android-ci.yml/badge.svg)](https://github.com/perierol/leben-in-deutschland/actions/workflows/android-ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A multilingual, offline-first study application for Germany's Leben in Deutschland and naturalization tests.
 
@@ -111,12 +110,12 @@ website/          Public landing page and privacy policy
 
 ## Licence
 
-The source code in this repository is released under the [MIT Licence](LICENSE).
+No licence is granted. This repository is published so that the work can be read
+and reviewed, not reused: all rights to the source code are reserved.
 
-The licence covers the code only. The German questions and answers come from the
-official state catalogue for the Leben in Deutschland test and are not owned by
-this project; the translations are generated and are not covered by the MIT grant
-either. Treat the contents of `scripts/content` as tooling, not as licensed content.
+The German questions and answers come from the official state catalogue for the
+Leben in Deutschland test and are not owned by this project. The translations are
+generated and are not redistributable either.
 
 ## Security and Content Notice
 
