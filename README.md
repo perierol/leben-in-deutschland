@@ -1,6 +1,6 @@
 # Leben in Deutschland
 
-[![Android CI](https://github.com/perihanimamogluerol/leben-in-deutschland/actions/workflows/android-ci.yml/badge.svg)](https://github.com/perihanimamogluerol/leben-in-deutschland/actions/workflows/android-ci.yml)
+[![Android CI](https://github.com/perierol/leben-in-deutschland/actions/workflows/android-ci.yml/badge.svg)](https://github.com/perierol/leben-in-deutschland/actions/workflows/android-ci.yml)
 
 A multilingual, offline-first study application for Germany's Leben in Deutschland and naturalization tests.
 
@@ -8,16 +8,21 @@ The project is being developed as a production-minded Android and iOS applicatio
 
 ## Project Status
 
-The project is currently in the foundation and architecture phase.
+The Android application is feature complete for its first release and is in closed
+testing on Google Play. iOS has not been started beyond the project skeleton.
 
-- Firebase content catalog: prepared
-- Firestore release: uploaded and activated
-- iOS project: created
-- Android project: created
-- Android CI: active
-- Production user flows: pending
-- Production automated test suite: pending
-- iOS CI: pending
+| Area | Status |
+| --- | --- |
+| Firebase content catalog | Prepared |
+| Firestore release | Uploaded and activated |
+| Android user flows | Home, study session, wrong-answer review, timed mock exam, exam history, settings, language and state selection |
+| Android test suite | 19 unit tests, 13 Compose UI tests |
+| Android CI | Active (build, lint, unit tests) |
+| Google Play | Closed testing |
+| Android release automation | Pending |
+| Compose UI tests in CI | Pending — they require a device and are not run yet |
+| iOS application | Project skeleton only |
+| iOS CI | Pending |
 
 ## Product Scope
 
@@ -33,28 +38,34 @@ The project is currently in the foundation and architecture phase.
 - Offline-first content and progress
 - Right-to-left support for Arabic, Persian/Dari, and Pashto
 
-## Technology Direction
+## Technology
 
-### Android
+### Android — in use
 
 - Kotlin
-- Jetpack Compose
+- Jetpack Compose and Material 3
+- Navigation 3
 - Coroutines and Flow
-- Room
+- Room, with schema export
 - DataStore
-- Hilt
-- WorkManager
-- Firebase Authentication
-- Cloud Firestore
+- Firebase Authentication (anonymous) and Cloud Firestore
+- kotlinx.serialization
 
-### iOS
+### Android — planned
 
-- Swift
-- SwiftUI
+- Hilt for dependency injection
+- WorkManager for background content refresh
+- Baseline profiles
+
+### iOS — planned
+
+The iOS target currently contains only the generated Xcode project. The technology
+choices below are the intended direction, not the current state.
+
+- Swift and SwiftUI
 - SwiftData
 - Swift Concurrency
-- Firebase Authentication
-- Cloud Firestore
+- Firebase Authentication and Cloud Firestore
 
 ## Engineering Goals
 
@@ -79,16 +90,24 @@ AI-generated translations will be clearly disclosed in the applications and may 
 ## Repository Structure
 
 ```text
-android/       Android application
-ios/           iOS application
-docs/          Product and engineering documentation
-docs/adr/      Architecture Decision Records
-firebase/      Firestore rules, indexes, and public configuration
-scripts/       Content validation and administrative tooling
+android/          Android application
+ios/              iOS application (project skeleton only)
+docs/             Product and engineering documentation
+docs/adr/         Architecture Decision Records
+firestore.rules   Cloud Firestore security rules
+firebase.json     Firebase CLI configuration
+scripts/content/  Content build, validation, and upload tooling
+website/          Public landing page and privacy policy
 ```
 
 ## Security and Content Notice
 
 Administrative credentials, service-account files, private keys, and environment variables are never stored in this repository.
+
+Cloud Firestore serves the content catalogue only to an authenticated caller. The
+application signs in anonymously before its first content sync, which keeps the
+question catalogue and its translations from being downloaded by anyone who knows
+the project ID, without asking users to create an account. Writes are refused for
+all clients; the content pipeline publishes through a service account.
 
 The German questions and answers are treated as the authoritative source content. Translations were generated with AI and may contain errors.

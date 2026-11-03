@@ -1,5 +1,6 @@
 package com.nextdaymobilestudio.lebenindeutschland.core.content.sync
 
+import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.ContentAuthenticator
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.RemoteContentDataSource
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
 
@@ -18,12 +19,17 @@ fun interface ContentSynchronizer {
 class ContentSyncCoordinator(
     private val remoteContentDataSource: RemoteContentDataSource,
     private val localContentRepository: LocalContentRepository,
+    private val contentAuthenticator: ContentAuthenticator = ContentAuthenticator.None,
     private val clock: () -> Long = System::currentTimeMillis,
 ) : ContentSynchronizer {
     private val mapper = ContentPackageMapper()
 
     override suspend fun synchronize(selectedLanguageCode: String): ContentSyncResult {
         validateLanguageCode(selectedLanguageCode)
+
+        // Firestore rules serve the catalogue only to an authenticated caller, so the
+        // session has to exist before the first read.
+        contentAuthenticator.ensureAuthenticated()
 
         val manifest = remoteContentDataSource.getActiveManifest()
         val releaseId = manifest.fields["activeReleaseId"] as? String

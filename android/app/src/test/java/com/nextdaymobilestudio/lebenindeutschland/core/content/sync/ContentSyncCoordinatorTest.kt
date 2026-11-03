@@ -1,5 +1,6 @@
 package com.nextdaymobilestudio.lebenindeutschland.core.content.sync
 
+import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.ContentAuthenticator
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.RemoteContentDataSource
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.RemoteContentDocument
 import com.nextdaymobilestudio.lebenindeutschland.core.database.entity.ContentPackageEntity
@@ -16,6 +17,37 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ContentSyncCoordinatorTest {
+    @Test
+    fun callerIsAuthenticatedBeforeTheFirstRemoteRead() = runBlocking {
+        val fixture = remoteContentFixture()
+        val remote = FakeRemoteContentDataSource(fixture)
+        val local = RecordingLocalContentRepository()
+        var authenticatedAfterCalls: Int? = null
+        val authenticator = ContentAuthenticator { authenticatedAfterCalls = remote.calls.size }
+
+        ContentSyncCoordinator(remote, local, authenticator) { 123L }.synchronize("en")
+
+        assertEquals(0, authenticatedAfterCalls)
+        assertTrue(remote.calls.isNotEmpty())
+    }
+
+    @Test
+    fun failedAuthenticationStopsTheSyncBeforeAnyRemoteRead() {
+        val fixture = remoteContentFixture()
+        val remote = FakeRemoteContentDataSource(fixture)
+        val local = RecordingLocalContentRepository()
+        val authenticator = ContentAuthenticator { throw ContentSyncException("no session") }
+
+        assertThrows(ContentSyncException::class.java) {
+            runBlocking {
+                ContentSyncCoordinator(remote, local, authenticator) { 123L }.synchronize("en")
+            }
+        }
+
+        assertEquals(emptyList<String>(), remote.calls)
+        assertEquals(emptyList<ContentPackageSnapshot>(), local.snapshots)
+    }
+
     @Test
     fun germanAndSelectedPackagesAreInstalledBeforeActivation() = runBlocking {
         val fixture = remoteContentFixture()

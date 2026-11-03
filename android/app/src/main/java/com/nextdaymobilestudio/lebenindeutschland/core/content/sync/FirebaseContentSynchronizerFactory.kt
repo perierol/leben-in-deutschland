@@ -2,7 +2,9 @@ package com.nextdaymobilestudio.lebenindeutschland.core.content.sync
 
 import android.content.Context
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.FirebaseAnonymousAuthenticator
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.FirestoreContentDataSource
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
 
@@ -21,6 +23,9 @@ object FirebaseContentSynchronizerFactory {
                 firestore = FirebaseFirestore.getInstance(firebaseApp),
             ),
             localContentRepository = localContentRepository,
+            contentAuthenticator = FirebaseAnonymousAuthenticator(
+                firebaseAuth = FirebaseAuth.getInstance(firebaseApp),
+            ),
         )
     }
 
