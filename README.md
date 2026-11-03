@@ -1,8 +1,17 @@
 # Leben in Deutschland
 
 [![Android CI](https://github.com/perierol/leben-in-deutschland/actions/workflows/android-ci.yml/badge.svg)](https://github.com/perierol/leben-in-deutschland/actions/workflows/android-ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A multilingual, offline-first study application for Germany's Leben in Deutschland and naturalization tests.
+
+<!-- Screenshots: drop 3–4 PNGs into docs/screenshots/ and uncomment.
+| Home | Study session | Mock exam | Languages |
+| --- | --- | --- | --- |
+| ![Home](docs/screenshots/home.png) | ![Study session](docs/screenshots/study.png) | ![Mock exam](docs/screenshots/exam.png) | ![Languages](docs/screenshots/languages.png) |
+-->
+
+The Android app is in closed testing on Google Play.
 
 The project is being developed as a production-minded Android and iOS application. Its purpose is not only to deliver a useful learning product, but also to demonstrate architecture, testing, performance, accessibility, security, and cross-platform engineering decisions.
 
@@ -99,6 +108,15 @@ firebase.json     Firebase CLI configuration
 scripts/content/  Content build, validation, and upload tooling
 website/          Public landing page and privacy policy
 ```
+
+## Licence
+
+The source code in this repository is released under the [MIT Licence](LICENSE).
+
+The licence covers the code only. The German questions and answers come from the
+official state catalogue for the Leben in Deutschland test and are not owned by
+this project; the translations are generated and are not covered by the MIT grant
+either. Treat the contents of `scripts/content` as tooling, not as licensed content.
 
 ## Security and Content Notice
 
