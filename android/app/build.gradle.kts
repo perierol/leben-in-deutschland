@@ -53,6 +53,15 @@ android {
     }
 }
 
+// firebase-auth 25.x carries Kotlin 2.4 metadata while this module compiles with
+// Kotlin 2.2.10, which the compiler rejects by default. Only the library's Java
+// surface is used here (FirebaseAuth, signInAnonymously, currentUser), so skipping
+// the check is contained. Remove it when the project moves to Kotlin 2.4 or newer.
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java)
+    .configureEach {
+        compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")
+    }
+
 dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
