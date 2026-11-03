@@ -1,14 +1,22 @@
 rules_version = '2';
 
+// The published content catalogue is read-only for clients and is written only by
+// the administrative content pipeline, which uses a service account and therefore
+// bypasses these rules.
+//
+// Reads require an authenticated caller. The app signs in anonymously before its
+// first sync, so this costs real users nothing while keeping the full question
+// catalogue and its translations from being downloaded by anyone who knows the
+// project ID.
 service cloud.firestore {
   match /databases/{database}/documents {
     match /contentManifest/{document=**} {
-      allow read: if true;
+      allow read: if request.auth != null;
       allow write: if false;
     }
 
     match /contentReleases/{document=**} {
-      allow read: if true;
+      allow read: if request.auth != null;
       allow write: if false;
     }
 
