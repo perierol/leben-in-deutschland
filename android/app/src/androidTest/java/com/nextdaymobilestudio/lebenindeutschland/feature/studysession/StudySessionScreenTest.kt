@@ -1,14 +1,23 @@
 package com.nextdaymobilestudio.lebenindeutschland.feature.studysession
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import com.nextdaymobilestudio.lebenindeutschland.R
 import com.nextdaymobilestudio.lebenindeutschland.core.database.model.StudyAnswer
 import com.nextdaymobilestudio.lebenindeutschland.core.database.model.StudyMemoryKey
 import com.nextdaymobilestudio.lebenindeutschland.core.database.model.StudyQuestion
@@ -141,6 +150,108 @@ class StudySessionScreenTest {
     }
 
     @Test
+    fun submittedWrongAnswerExposesStateDescriptions() {
+        setScreen(
+            state = readyState(
+                selectedAnswerId = "B",
+                isSubmitted = true,
+                question = testQuestion(
+                    answers = listOf(
+                        StudyAnswer("A", 0, "Antwort A", "Cevap A", null),
+                        StudyAnswer("B", 1, "Antwort B", "Cevap B", null),
+                        StudyAnswer("C", 2, "Antwort C", "Cevap C", null),
+                    ),
+                ),
+            ),
+        )
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        composeRule.onNodeWithTag(StudySessionTestTags.answer("A")).assert(
+            SemanticsMatcher.expectValue(
+                SemanticsProperties.StateDescription,
+                context.getString(R.string.study_correct),
+            ),
+        )
+        composeRule.onNodeWithTag(StudySessionTestTags.answer("B")).assert(
+            SemanticsMatcher.expectValue(
+                SemanticsProperties.StateDescription,
+                context.getString(R.string.study_incorrect),
+            ),
+        )
+        composeRule.onNodeWithTag(StudySessionTestTags.answer("C")).assert(
+            SemanticsMatcher.keyNotDefined(SemanticsProperties.StateDescription),
+        )
+    }
+
+    @Test
+    fun onlyVerdictIsPoliteLiveRegion() {
+        setScreen(
+            state = readyState(
+                selectedAnswerId = "B",
+                isSubmitted = true,
+            ),
+        )
+        val verdict = InstrumentationRegistry.getInstrumentation().targetContext
+            .getString(R.string.study_incorrect)
+        val explanation = "Das ist die Erklärung."
+
+        composeRule.onNodeWithText(verdict)
+            .performScrollTo()
+            .assert(
+                SemanticsMatcher.expectValue(
+                    SemanticsProperties.LiveRegion,
+                    LiveRegionMode.Polite,
+                ),
+            )
+            .assert(!hasText(explanation))
+        composeRule.onNodeWithTag(StudySessionTestTags.EXPLANATION)
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.LiveRegion))
+        composeRule.onNodeWithText(explanation)
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.LiveRegion))
+    }
+
+    @Test
+    fun submittingAnswerRevealsVerdictWithoutManualScroll() {
+        val verdict = InstrumentationRegistry.getInstrumentation().targetContext
+            .getString(R.string.study_incorrect)
+        val state = mutableStateOf<StudySessionUiState>(
+            readyState(selectedAnswerId = "B", question = longAnswerQuestion()),
+        )
+        setScreen(state = state)
+
+        state.value = readyState(
+            selectedAnswerId = "B",
+            isSubmitted = true,
+            question = longAnswerQuestion(),
+        )
+
+        composeRule.onNodeWithText(verdict).assertIsDisplayed()
+    }
+
+    @Test
+    fun verdictRevealDoesNotRepeatOnRecomposition() {
+        val state = mutableStateOf<StudySessionUiState>(
+            readyState(selectedAnswerId = "B", question = longAnswerQuestion()),
+        )
+        setScreen(state = state)
+        state.value = readyState(
+            selectedAnswerId = "B",
+            isSubmitted = true,
+            question = longAnswerQuestion(),
+        )
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithTag(StudySessionTestTags.QUESTION).performScrollTo()
+        state.value = readyState(
+            selectedAnswerId = "B",
+            isSubmitted = true,
+            question = longAnswerQuestion(),
+        ).copy(totalCount = 3)
+
+        composeRule.onNodeWithTag(StudySessionTestTags.QUESTION).assertIsDisplayed()
+    }
+
+    @Test
     fun errorCanRetry() {
         var retried = false
         setScreen(
@@ -190,11 +301,19 @@ class StudySessionScreenTest {
         onRetry: () -> Unit = {},
         onFinished: () -> Unit = {},
         mode: StudySessionMode = StudySessionMode.ALL_QUESTIONS,
+    ) = setScreen(mutableStateOf(state), onAnswerSelected, onRetry, onFinished, mode)
+
+    private fun setScreen(
+        state: State<StudySessionUiState>,
+        onAnswerSelected: (String) -> Unit = {},
+        onRetry: () -> Unit = {},
+        onFinished: () -> Unit = {},
+        mode: StudySessionMode = StudySessionMode.ALL_QUESTIONS,
     ) {
         composeRule.setContent {
             LebenInDeutschlandTheme {
                 StudySessionScreen(
-                    uiState = state,
+                    uiState = state.value,
                     mode = mode,
                     onBack = {},
                     onAnswerSelected = onAnswerSelected,
@@ -219,6 +338,18 @@ private fun readyState(
     selectedAnswerId = selectedAnswerId,
     isSubmitted = isSubmitted,
 )
+
+private fun longAnswerQuestion(): StudyQuestion {
+    val longAnswer = "Diese Antwort ist absichtlich sehr lang, damit die Liste mehr Platz benötigt."
+    return testQuestion(
+        answers = listOf(
+            StudyAnswer("A", 0, "$longAnswer A", "$longAnswer A", null),
+            StudyAnswer("B", 1, "$longAnswer B", "$longAnswer B", null),
+            StudyAnswer("C", 2, "$longAnswer C", "$longAnswer C", null),
+            StudyAnswer("D", 3, "$longAnswer D", "$longAnswer D", null),
+        ),
+    )
+}
 
 private fun testQuestion(
     memoryKey: StudyMemoryKey? = StudyMemoryKey(

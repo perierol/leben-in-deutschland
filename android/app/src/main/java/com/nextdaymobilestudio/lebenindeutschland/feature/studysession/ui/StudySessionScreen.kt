@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
@@ -28,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
@@ -43,6 +45,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -53,9 +56,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -160,7 +166,19 @@ private fun QuestionContent(
     innerPadding: PaddingValues,
     onAnswerSelected: (String) -> Unit,
 ) {
+    val listState = rememberLazyListState()
+    var hasRevealedFeedback by rememberSaveable(state.question.id) {
+        mutableStateOf(state.isSubmitted)
+    }
+    LaunchedEffect(state.question.id, state.isSubmitted) {
+        if (state.isSubmitted && !hasRevealedFeedback) {
+            hasRevealedFeedback = true
+            listState.animateScrollToItem(explanationItemIndex(state.question))
+        }
+    }
+
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
@@ -240,6 +258,13 @@ private fun QuestionContent(
         }
     }
 }
+
+// Mirrors the item order in QuestionContent: progress, memory key, image, question, answers.
+private fun explanationItemIndex(question: StudyQuestion): Int =
+    2 +
+        (if (question.memoryKey != null) 1 else 0) +
+        (if (question.questionImage != null) 1 else 0) +
+        question.answers.size
 
 @Composable
 private fun ExpandableMemoryKey(
@@ -359,6 +384,11 @@ private fun AnswerOption(
         isSelected -> MaterialTheme.colorScheme.primary
         else -> MaterialTheme.colorScheme.outlineVariant
     }
+    val resultStateDescription = when {
+        isSubmitted && isCorrectAnswer -> stringResource(R.string.study_correct)
+        isSubmitted && isSelected -> stringResource(R.string.study_incorrect)
+        else -> null
+    }
 
     Surface(
         modifier = Modifier
@@ -370,7 +400,10 @@ private fun AnswerOption(
                 enabled = !isSubmitted,
                 role = Role.RadioButton,
                 onClick = onSelected,
-            ),
+            )
+            .semantics {
+                resultStateDescription?.let { stateDescription = it }
+            },
         shape = RoundedCornerShape(18.dp),
         color = containerColor,
         contentColor = contentColor,
@@ -424,6 +457,17 @@ private fun AnswerOption(
                     )
                 }
             }
+            if (resultStateDescription != null) {
+                Spacer(modifier = Modifier.width(12.dp))
+                Icon(
+                    imageVector = if (isCorrectAnswer) {
+                        Icons.Filled.CheckCircle
+                    } else {
+                        Icons.Filled.Close
+                    },
+                    contentDescription = null,
+                )
+            }
         }
     }
 }
@@ -469,7 +513,12 @@ private fun ExplanationCard(state: StudySessionUiState.Ready) {
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    liveRegion = LiveRegionMode.Polite
+                },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Icon(
                     imageVector = if (state.isCorrect) {
                         Icons.Filled.CheckCircle
