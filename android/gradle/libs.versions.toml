@@ -10,6 +10,7 @@ activityCompose = "1.13.0"
 appcompat = "1.8.0"
 kotlin = "2.2.10"
 kotlinxSerialization = "1.9.0"
+kotlinxCoroutines = "1.10.2"
 composeBom = "2026.09.00"
 navigation3 = "1.2.0"
 dataStore = "1.2.1"
@@ -50,6 +51,7 @@ androidx-room-testing = { group = "androidx.room", name = "room-testing", versio
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
