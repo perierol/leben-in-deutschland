@@ -63,10 +63,13 @@ Ranked by production risk, then how well each fits a focused PR.
 - **Verification:** Unit and instrumented tests.
 
 ### F-04 · A mock-exam timeout can cancel an in-flight answer and submit a stale snapshot
-- **Status (2026-11-05):** fix on `fix/android-mock-exam-submit-integrity` (not committed). Regression test `answerTappedAtDeadlineWithPendingSave_isCountedInResult` went RED → GREEN. Five guard tests cover a single submission, taps during the timeout submit, a failed pending save, and the `isSubmitting` resets. Each guard was mutation-checked. See `evidence/F-04/green-phase.md`.
+- **Status (2026-11-05):** fix **merged in #33** (`3422345`). Android CI passed on the PR head `ac2cb54`. Regression test `answerTappedAtDeadlineWithPendingSave_isCountedInResult` went RED → GREEN. Five guard tests cover a single submission, taps during the timeout submit, a failed pending save, and the `isSubmitting` resets. Each guard was mutation-checked. See `evidence/F-04/green-phase.md`.
   - **Implementation differs from the fix below:** no `Mutex`. The timeout `join()`s the pending save and submits the latest snapshot, and an `isSubmitting` flag blocks further answer, navigation and submit actions once a submission starts.
   - **Decision:** an answer tapped before the deadline counts, even if its save completes after it (ADR 0010 does not cover this case).
   - **Remaining:** taps up to about 1 s after the deadline are still accepted, because the timer checks once per second (follow-up, see F-25). A save that never completes now delays the timeout submit indefinitely.
+  - **Post-merge audit (2026-11-05, `/android-audit range f7acff4..3422345`; local report, not committed):** no regression in the F-04 behaviour. Test follow-ups, not registered as separate findings:
+    - the `isSubmitting` guards in `confirmSubmit` and `moveBy` are not tested in isolation;
+    - one test asserts that the UI stays `Ready` during the timeout submit, which needs a UX decision.
 - **Category:** Concurrency / Data integrity · **Type:** Risk · **Severity:** Medium · **Confidence:** Probable (verified code path) · **Effort:** S–M · **Source:** UI-3, ARCH-5, TEST-3
 - **Evidence:**
   - `feature/mockexam/MockExamViewModel.kt:177-184` captures `exam`, calls `actionJob?.cancel()` and submits `loadedExam`.
@@ -78,7 +81,7 @@ Ranked by production risk, then how well each fits a focused PR.
 - **Verification:** Unit test. This depends on F-07 (coroutines-test) being available.
 
 ### F-05 · A mock exam is archived to Room before its completed snapshot is persisted
-- **Status (2026-11-05):** fix on `fix/android-mock-exam-submit-integrity` (not committed). `MockExamCoordinator.submit` now saves the completed snapshot before archiving, and runs both writes inside `NonCancellable` so a cancelled caller cannot split them. Four regression tests went RED → GREEN (`archiveFailure_restoreReturnsCompletedExam`, `completedSaveFailure_leavesNoOrphanHistoryRow`, `restartAfterArchiveCrash_showsResultMatchingHistory`, `cancellationDuringArchive_stillRecordsHistoryAndProgress`). See `evidence/F-05/green-phase.md`.
+- **Status (2026-11-05):** fix **merged in #33** (`3422345`). Android CI passed on the PR head `ac2cb54`. `MockExamCoordinator.submit` now saves the completed snapshot before archiving, and runs both writes inside `NonCancellable` so a cancelled caller cannot split them. Four regression tests went RED → GREEN (`archiveFailure_restoreReturnsCompletedExam`, `completedSaveFailure_leavesNoOrphanHistoryRow`, `restartAfterArchiveCrash_showsResultMatchingHistory`, `cancellationDuringArchive_stillRecordsHistoryAndProgress`). See `evidence/F-05/green-phase.md`.
   - **Remaining limitation (accepted, not asserted by a test):** study progress may not receive the exam's answers if archiving fails after the completed snapshot is saved.
     - **Triggers:** process death between the two writes, or any exception from the Room archive (for example a SQLite or disk error) followed by Retry in the app. Cancellation is no longer a trigger (`NonCancellable`). A missing question is not one either, because `submit` resolves all questions before the first write.
     - **Mechanism:** the next `restore()` re-archives the attempt with `updateStudyProgress = false`, following ADR 0012's backfill rule (`:26-28`). That rule was written for snapshots from older app versions, but restore cannot tell them apart. Switching to `true` would double-count progress for older snapshots.
@@ -86,6 +89,10 @@ Ranked by production risk, then how well each fits a focused PR.
   - **Follow-up:**
     - Add a defaulted field to `MockExamSnapshot` that marks snapshots written by the current version. The serializer already ignores unknown keys and encodes defaults, so older snapshots still decode. Restore could then record progress for current-version snapshots only.
     - Update ADR 0012. A product decision is needed on when older-version handling can be retired.
+  - **Post-merge audit (2026-11-05, `/android-audit range f7acff4..3422345`; local report, not committed):**
+    - It confirmed the remaining limitation above, without new triggers.
+    - It found that the `restore()` backfill path has no Room-level test (**F-33**).
+    - It found a low regression risk from the `NonCancellable` submit (**F-34**).
 - **Category:** Data integrity · **Type:** Defect (crash-window ordering) · **Severity:** Medium · **Confidence:** Confirmed (verified ordering) · **Effort:** S · **Source:** ARCH-2
 - **Evidence:**
   - `feature/mockexam/MockExamCoordinator.kt:154-159` calls `archiveCompletedExam(...)` and then `saveExam(completed)`.
@@ -104,6 +111,12 @@ Ranked by production risk, then how well each fits a focused PR.
 - **Verification:** CI run log.
 
 ### F-07 · No ViewModel is unit-tested, and the test toolchain can't test them
+- **Update (2026-11-05, after #32 and #33): partly resolved.**
+  - **#32** (`f7acff4`) added `kotlinx-coroutines-test` (`android/app/build.gradle.kts:93`), `testing/MainDispatcherRule.kt` and `MockExamViewModelTest`.
+  - **#33** (`3422345`) extended `MockExamViewModelTest` to 13 tests. They cover timer expiry, restore after the deadline, double-submit guards, a pending save at the deadline, and the retry and new-exam resets.
+  - **Still untested:** `StudySessionViewModel`, `ContentBootstrapViewModel` and `ExamHistoryViewModel`. A grep over `src/test` and `src/androidTest` on 2026-11-05 found no references.
+  - Turbine and Robolectric are still absent.
+  - The evidence below describes the code at `e43187f`.
 - **Category:** Testing · **Type:** Safeguard · **Severity:** High (engineering) · **Confidence:** Confirmed · **Effort:** S (toolchain) + M (tests) · **Source:** TEST-1, TEST-2, TEST-10, ARCH-10
 - **Evidence:**
   - Unit-test dependencies are only `junit` (`android/app/build.gradle.kts:82`). `kotlinx-coroutines-test`, Turbine and Robolectric are absent.
@@ -249,6 +262,8 @@ Ranked by production risk, then how well each fits a focused PR.
 | F-30 | Security / Privacy | Backup rules are untouched templates. Full auto-backup includes the re-downloadable catalogue. | Suggestion | Low | Confirmed | `AndroidManifest.xml:10`, `res/xml/backup_rules.xml`, `data_extraction_rules.xml` | Document an explicit include/exclude policy | S | SEC-5 |
 | F-31 | Supply chain | GitHub Actions are pinned by tag, not SHA. No Gradle dependency verification. | Suggestion | Low | Confirmed | `.github/workflows/android-ci.yml:35,38,44` | Pin SHAs. Add Dependabot. | S | SEC-6 |
 | F-32 | UX | After process death, the study session reshuffles and shows a different unanswered question at the same index | Suggestion | Low | Confirmed (reproduced on emulator) | ADR 0007 lines 18-19, `StudySessionCoordinator.kt:62-68` | Persist the session order or seed | S | LEAD |
+| F-33 | Testing | The mock-exam backfill path (`restore()` re-archives a completed snapshot with `updateStudyProgress = false`) is tested only against a fake, never against Room. Since #33 it is the recovery path for every crash between the two submit writes. *Added 2026-11-05 from the post-merge audit of #33; describes `3422345`.* | Safeguard | Medium | Confirmed | `feature/mockexam/MockExamCoordinator.kt:36-41`. The only Room-level call is `androidTest/.../LocalContentDatabaseTest.kt:230-231` (`recordMockExamResult(result)`, default `true`). Fake at `test/.../MockExamTestFixtures.kt:134-158`. Room at `core/database/repository/RoomLocalContentRepository.kt:207-240`. Room tests do not run in CI (F-06). | Instrumented test `recordMockExamResult_withoutProgress_writesHistoryOnlyAndIsIdempotent` in `LocalContentDatabaseTest`. Gate it in CI with F-06. | S | TEST (TR-1) |
+| F-34 | Concurrency / Lifecycle | **Regression risk introduced by #33, not a confirmed bug.** The submit's two writes now run in `NonCancellable`, so they can outlive the ViewModel. If the learner leaves mid-submit and quickly returns, the new ViewModel's `restore()` may archive the attempt without study progress while the original submit is still running. The outcome is the same as the F-05 limitation. The reviewer judged that the original submit almost always wins. *Added 2026-11-05 from the post-merge audit of #33; describes `3422345`.* | Risk | Low | Needs verification | `feature/mockexam/MockExamCoordinator.kt:159-166`, with `restore()` at `:36-41`. `retry()` (`MockExamViewModel.kt:38-57`) and `startNewExam()` (`:132-143`) do not wait for the block, but they cannot be reached during a submit: Retry renders only for `Error`, and New exam only for `Result` (`feature/mockexam/ui/MockExamScreen.kt:110,116-119`). Not reproduced. | First confirm the ViewModel's lifetime under Navigation3 entry scoping. If the race is real, serialise exam persistence in `MockExamCoordinator` with a `Mutex` shared by `submit`, `restore`, `clear` and the answer and move saves. Test: `restoreDuringInFlightSubmit_waitsAndRecordsProgressOnce` (with the `holdNextRecord` gate). | S–M | ARCH (AR-2) |
 
 ## Done well (evidence-backed)
 
