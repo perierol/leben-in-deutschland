@@ -1,0 +1,25 @@
+# Mutation check, 2026-11-05. Each mutant is one edit to MockExamViewModel.kt, applied to a copy of the fixed file;
+# ./gradlew :app:testDebugUnitTest --tests '*MockExam*' run per mutant; the file was restored byte-identical afterwards (cmp).
+# M1 removes '|| isSubmitting' from selectAnswer; M2/M3 remove 'isSubmitting = false' from retry()/startNewExam();
+# M4 removes '|| _uiState.value !is MockExamUiState.Ready' from the timeout skip check.
+# M2 failure: org.junit.ComparisonFailure at MockExamViewModelTest.kt:298 (assertEquals("B", selectedAnswerId)).
+
+## M1-selectAnswer-guard
+  FAIL timeoutSubmitInFlight_ignoresAnswerAndNavigationTaps
+       java.lang.AssertionError: Completed snapshot was overwritten
+TOTAL tests=25 failed=1
+
+## M2-retry-reset
+  FAIL submitFailureThenRetry_acceptsAnswersAgain
+TOTAL tests=25 failed=1
+
+## M3-startNewExam-reset
+  FAIL startNewExamAfterResult_acceptsAnswers
+       java.lang.AssertionError: expected:<A> but was:<null>
+TOTAL tests=25 failed=1
+
+## M4-skip-if-not-Ready
+  FAIL pendingSaveFailsAtDeadline_showsErrorThenRetrySubmitsByTimeout
+       java.lang.AssertionError: expected:<Error> but was:<Result(correctCount=0, wrongCount=0, unansweredCount=33, totalCount=33, submittedByTimeout=true)>
+TOTAL tests=25 failed=1
+

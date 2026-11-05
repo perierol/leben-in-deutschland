@@ -7,6 +7,8 @@ import com.nextdaymobilestudio.lebenindeutschland.core.database.model.StudyQuest
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
 import com.nextdaymobilestudio.lebenindeutschland.feature.mockexam.data.MockExamPreferencesRepository
 import java.util.Locale
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 
 class MockExamCoordinator(
     private val localContentRepository: LocalContentRepository,
@@ -151,12 +153,17 @@ class MockExamCoordinator(
             correctCount = correctCount,
             submittedByTimeout = submittedByTimeout,
         )
-        archiveCompletedExam(
-            exam = completed,
-            questionsById = questionsById,
-            updateStudyProgress = true,
-        )
-        mockExamPreferencesRepository.saveExam(completed)
+        // Persist the completed snapshot before archiving. If the process dies in between,
+        // restore() sees a completed exam and archives it idempotently. NonCancellable keeps
+        // a cancelled caller (e.g. leaving the screen) from splitting the two writes.
+        withContext(NonCancellable) {
+            mockExamPreferencesRepository.saveExam(completed)
+            archiveCompletedExam(
+                exam = completed,
+                questionsById = questionsById,
+                updateStudyProgress = true,
+            )
+        }
         return completed
     }
 

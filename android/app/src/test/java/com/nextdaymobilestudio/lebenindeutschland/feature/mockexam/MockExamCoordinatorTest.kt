@@ -1,6 +1,9 @@
 package com.nextdaymobilestudio.lebenindeutschland.feature.mockexam
 
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -125,6 +128,73 @@ class MockExamCoordinatorTest {
         assertEquals(completed, coordinator.restore("tr", "he"))
         assertEquals(1, localRepository.mockExamResults.size)
         assertTrue(localRepository.studyAnswerWrites.isEmpty())
+    }
+
+    // F-05: a crash after archiving but before the completed snapshot is saved must not
+    // restore an exam the learner can keep answering. Study progress for this crash
+    // window is deliberately not asserted (restore archives without progress, ADR 0012).
+    @Test
+    fun archiveFailure_restoreReturnsCompletedExam() = runBlocking {
+        val localRepository = FakeMockExamContentRepository()
+        val preferencesRepository = FakeMockExamPreferencesRepository()
+        val coordinator = coordinator(localRepository, preferencesRepository)
+        var exam = coordinator.start("tr", "he")
+        exam = coordinator.selectAnswer(exam, coordinator.getQuestion(exam, 0), "A")
+        localRepository.failNextRecord = true
+
+        val failure = runCatching { coordinator.submit(exam, submittedByTimeout = false) }
+
+        assertTrue(failure.exceptionOrNull() is IllegalStateException)
+        val restored = requireNotNull(coordinator.restore("tr", "he"))
+        assertTrue("Restored exam must be complete", restored.isComplete)
+        assertEquals(1, restored.correctCount)
+        assertEquals(restored.attemptId, localRepository.mockExamResults.single().summary.attemptId)
+    }
+
+    // F-05: history and the resumable snapshot must agree. An attempt that cannot be
+    // restored as complete must not already exist in history.
+    @Test
+    fun completedSaveFailure_leavesNoOrphanHistoryRow() = runBlocking {
+        val localRepository = FakeMockExamContentRepository()
+        val preferencesRepository = FakeMockExamPreferencesRepository()
+        val coordinator = coordinator(localRepository, preferencesRepository)
+        var exam = coordinator.start("tr", "he")
+        exam = coordinator.selectAnswer(exam, coordinator.getQuestion(exam, 0), "A")
+        preferencesRepository.failNextCompletedSave = true
+
+        val failure = runCatching { coordinator.submit(exam, submittedByTimeout = false) }
+
+        assertTrue(failure.exceptionOrNull() is IllegalStateException)
+        val restored = requireNotNull(coordinator.restore("tr", "he"))
+        assertFalse(restored.isComplete)
+        assertTrue(
+            "History must not contain an attempt that restores as incomplete",
+            localRepository.mockExamResults.isEmpty(),
+        )
+    }
+
+    // F-05: cancelling the caller (for example leaving the screen mid-submit) must not
+    // split the completed-snapshot save from the archive, or restore() would backfill
+    // the attempt without study progress.
+    @Test
+    fun cancellationDuringArchive_stillRecordsHistoryAndProgress() = runBlocking {
+        val localRepository = FakeMockExamContentRepository()
+        val preferencesRepository = FakeMockExamPreferencesRepository()
+        val coordinator = coordinator(localRepository, preferencesRepository)
+        var exam = coordinator.start("tr", "he")
+        exam = coordinator.selectAnswer(exam, coordinator.getQuestion(exam, 0), "A")
+        val archiveGate = CompletableDeferred<Unit>()
+        localRepository.holdNextRecord = archiveGate
+
+        val submitJob = launch { coordinator.submit(exam, submittedByTimeout = false) }
+        yield()
+        assertTrue(requireNotNull(preferencesRepository.saved.value).isComplete)
+        submitJob.cancel()
+        archiveGate.complete(Unit)
+        submitJob.join()
+
+        assertEquals(1, localRepository.mockExamResults.size)
+        assertEquals(1, localRepository.studyAnswerWrites.size)
     }
 
     @Test

@@ -1,0 +1,34 @@
+# Command: ./gradlew :app:testDebugUnitTest  (run from android/; MockExam suites shown, full suite: 82 tests, 1 failed)
+# Run: 2026-11-05, branch fix/android-mock-exam-submit-integrity, base f7acff4, F-05 fix applied (MockExamCoordinator.submit), F-04 not yet fixed
+# Source: JUnit XML (stack traces trimmed to the test frame)
+
+DataStoreMockExamPreferencesRepositoryTest: tests=2 failures=0 errors=0 skipped=0
+  PASS clear removes persisted exam
+  PASS exam survives serialization with answers and deadline
+
+MockExamCoordinatorTest: tests=9 failures=0 errors=0 skipped=0
+  PASS restoreBackfillsLegacyCompletedExamWithoutCountingProgressTwice
+  PASS selectedAnswerAndCurrentQuestionArePersisted
+  PASS oneResultAppliesBothOfficialPassThresholds
+  PASS completedSaveFailure_leavesNoOrphanHistoryRow
+  PASS submitRecordsAnsweredQuestionsAndLeavesBlanksUnchanged
+  PASS restoreReturnsMatchingExamAndClearsStaleSelection
+  PASS startRejectsCatalogWithoutThreeStateQuestions
+  PASS startCreatesThirtyGeneralAndThreeStateQuestions
+  PASS archiveFailure_restoreReturnsCompletedExam
+
+MockExamViewModelTest: tests=10 failures=1 errors=0 skipped=0
+  PASS startExamShowsFirstQuestionWithFullDuration
+  PASS restoreAfterDeadlineSubmitsByTimeout
+  PASS pendingSaveAtDeadline_archivesExactlyOnce
+  PASS restoreBeforeDeadlineResumesSavedQuestionAndRemainingTime
+  PASS restartAfterArchiveCrash_showsResultMatchingHistory
+  FAIL answerTappedAtDeadlineWithPendingSave_isCountedInResult
+       java.lang.AssertionError: expected:<1> but was:<0>
+       at com.nextdaymobilestudio.lebenindeutschland.feature.mockexam.MockExamViewModelTest$answerTappedAtDeadlineWithPendingSave_isCountedInResult$1.invokeSuspend(MockExamViewModelTest.kt:147)
+  PASS timerTickUpdatesRemainingSeconds
+  PASS timerExpiryAutoSubmitsWithTimeoutFlag
+  PASS answerSelectionIsIgnoredWhileThePreviousAnswerIsSaving
+  PASS lateSaveCompletion_neverReplacesResultWithError
+
+TOTAL tests=21 failed=1
