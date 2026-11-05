@@ -1,0 +1,36 @@
+# Command: ./gradlew :app:testDebugUnitTest  (run from android/; MockExam suites shown; full suite 86 tests, 0 failed)
+# Run: 2026-11-05, branch fix/android-mock-exam-submit-integrity, base f7acff4, after the PR-D review follow-up (NonCancellable, guard tests)
+# Source: JUnit XML
+
+DataStoreMockExamPreferencesRepositoryTest: tests=2 failures=0 errors=0 skipped=0
+  PASS clear removes persisted exam
+  PASS exam survives serialization with answers and deadline
+
+MockExamCoordinatorTest: tests=10 failures=0 errors=0 skipped=0
+  PASS restoreBackfillsLegacyCompletedExamWithoutCountingProgressTwice
+  PASS selectedAnswerAndCurrentQuestionArePersisted
+  PASS cancellationDuringArchive_stillRecordsHistoryAndProgress
+  PASS oneResultAppliesBothOfficialPassThresholds
+  PASS completedSaveFailure_leavesNoOrphanHistoryRow
+  PASS submitRecordsAnsweredQuestionsAndLeavesBlanksUnchanged
+  PASS restoreReturnsMatchingExamAndClearsStaleSelection
+  PASS startRejectsCatalogWithoutThreeStateQuestions
+  PASS startCreatesThirtyGeneralAndThreeStateQuestions
+  PASS archiveFailure_restoreReturnsCompletedExam
+
+MockExamViewModelTest: tests=13 failures=0 errors=0 skipped=0
+  PASS timeoutSubmitInFlight_ignoresAnswerAndNavigationTaps
+  PASS startExamShowsFirstQuestionWithFullDuration
+  PASS restoreAfterDeadlineSubmitsByTimeout
+  PASS submitFailureThenRetry_acceptsAnswersAgain
+  PASS pendingSaveAtDeadline_submitsExactlyOnce
+  PASS restoreBeforeDeadlineResumesSavedQuestionAndRemainingTime
+  PASS restartAfterArchiveCrash_showsResultMatchingHistory
+  PASS answerTappedAtDeadlineWithPendingSave_isCountedInResult
+  PASS timerTickUpdatesRemainingSeconds
+  PASS timerExpiryAutoSubmitsWithTimeoutFlag
+  PASS answerSelectionIsIgnoredWhileThePreviousAnswerIsSaving
+  PASS pendingSaveFailsAtDeadline_showsErrorThenRetrySubmitsByTimeout
+  PASS startNewExamAfterResult_acceptsAnswers
+
+TOTAL tests=25 failed=0

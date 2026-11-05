@@ -10,6 +10,7 @@ import com.nextdaymobilestudio.lebenindeutschland.core.database.model.StudyAnswe
 import com.nextdaymobilestudio.lebenindeutschland.core.database.model.StudyQuestion
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
 import com.nextdaymobilestudio.lebenindeutschland.feature.mockexam.data.MockExamPreferencesRepository
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -17,10 +18,22 @@ internal class FakeMockExamPreferencesRepository : MockExamPreferencesRepository
     val saved = MutableStateFlow<MockExamSnapshot?>(null)
     override val exam: Flow<MockExamSnapshot?> = saved
 
+    /** Simulates process death while the completed snapshot is being written. One-shot. */
+    var failNextCompletedSave = false
+
+    /** Successful saves of a completed snapshot; a double submit shows up here. */
+    var completedSaves = 0
+        private set
+
     override suspend fun getExam(): MockExamSnapshot? = saved.value
 
     override suspend fun saveExam(exam: MockExamSnapshot) {
+        if (exam.isComplete && failNextCompletedSave) {
+            failNextCompletedSave = false
+            throw IllegalStateException("Simulated crash while saving the completed exam")
+        }
         saved.value = exam
+        if (exam.isComplete) completedSaves += 1
     }
 
     override suspend fun clearExam() {
@@ -39,6 +52,19 @@ internal class FakeMockExamContentRepository(
     private val release = mockExamRelease()
     val studyAnswerWrites = mutableListOf<StudyAnswerRecord>()
     val mockExamResults = mutableListOf<MockExamResultRecord>()
+
+    /** Simulates process death while the exam is being archived to history. One-shot. */
+    var failNextRecord = false
+
+    /** When set, the next archive waits for this before writing. One-shot. */
+    var holdNextRecord: CompletableDeferred<Unit>? = null
+
+    /**
+     * Archive attempts, including ones the attempt-ID dedupe ignores, so a double
+     * submit is visible even though history keeps one row.
+     */
+    var recordCalls = 0
+        private set
 
     override fun observeActiveRelease(): Flow<ContentReleaseEntity?> =
         MutableStateFlow(release)
@@ -109,6 +135,15 @@ internal class FakeMockExamContentRepository(
         result: MockExamResultRecord,
         updateStudyProgress: Boolean,
     ): Boolean {
+        recordCalls += 1
+        holdNextRecord?.let { gate ->
+            holdNextRecord = null
+            gate.await()
+        }
+        if (failNextRecord) {
+            failNextRecord = false
+            throw IllegalStateException("Simulated crash while archiving the exam")
+        }
         if (mockExamResults.any { saved -> saved.summary.attemptId == result.summary.attemptId }) {
             return false
         }

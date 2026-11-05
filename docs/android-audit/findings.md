@@ -63,6 +63,10 @@ Ranked by production risk, then how well each fits a focused PR.
 - **Verification:** Unit and instrumented tests.
 
 ### F-04 · A mock-exam timeout can cancel an in-flight answer and submit a stale snapshot
+- **Status (2026-11-05):** fix on `fix/android-mock-exam-submit-integrity` (not committed). Regression test `answerTappedAtDeadlineWithPendingSave_isCountedInResult` went RED → GREEN. Five guard tests cover a single submission, taps during the timeout submit, a failed pending save, and the `isSubmitting` resets. Each guard was mutation-checked. See `evidence/F-04/green-phase.md`.
+  - **Implementation differs from the fix below:** no `Mutex`. The timeout `join()`s the pending save and submits the latest snapshot, and an `isSubmitting` flag blocks further answer, navigation and submit actions once a submission starts.
+  - **Decision:** an answer tapped before the deadline counts, even if its save completes after it (ADR 0010 does not cover this case).
+  - **Remaining:** taps up to about 1 s after the deadline are still accepted, because the timer checks once per second (follow-up, see F-25). A save that never completes now delays the timeout submit indefinitely.
 - **Category:** Concurrency / Data integrity · **Type:** Risk · **Severity:** Medium · **Confidence:** Probable (verified code path) · **Effort:** S–M · **Source:** UI-3, ARCH-5, TEST-3
 - **Evidence:**
   - `feature/mockexam/MockExamViewModel.kt:177-184` captures `exam`, calls `actionJob?.cancel()` and submits `loadedExam`.
@@ -74,6 +78,14 @@ Ranked by production risk, then how well each fits a focused PR.
 - **Verification:** Unit test. This depends on F-07 (coroutines-test) being available.
 
 ### F-05 · A mock exam is archived to Room before its completed snapshot is persisted
+- **Status (2026-11-05):** fix on `fix/android-mock-exam-submit-integrity` (not committed). `MockExamCoordinator.submit` now saves the completed snapshot before archiving, and runs both writes inside `NonCancellable` so a cancelled caller cannot split them. Four regression tests went RED → GREEN (`archiveFailure_restoreReturnsCompletedExam`, `completedSaveFailure_leavesNoOrphanHistoryRow`, `restartAfterArchiveCrash_showsResultMatchingHistory`, `cancellationDuringArchive_stillRecordsHistoryAndProgress`). See `evidence/F-05/green-phase.md`.
+  - **Remaining limitation (accepted, not asserted by a test):** study progress may not receive the exam's answers if archiving fails after the completed snapshot is saved.
+    - **Triggers:** process death between the two writes, or any exception from the Room archive (for example a SQLite or disk error) followed by Retry in the app. Cancellation is no longer a trigger (`NonCancellable`). A missing question is not one either, because `submit` resolves all questions before the first write.
+    - **Mechanism:** the next `restore()` re-archives the attempt with `updateStudyProgress = false`, following ADR 0012's backfill rule (`:26-28`). That rule was written for snapshots from older app versions, but restore cannot tell them apart. Switching to `true` would double-count progress for older snapshots.
+    - **Effect:** history and the result screen are correct, but **that exam's answers never reach study progress**, so its wrong answers do not enter wrong-answer review. This contradicts ADR 0010 `:57-58` and extends ADR 0012's backfill rule beyond its stated scope.
+  - **Follow-up:**
+    - Add a defaulted field to `MockExamSnapshot` that marks snapshots written by the current version. The serializer already ignores unknown keys and encodes defaults, so older snapshots still decode. Restore could then record progress for current-version snapshots only.
+    - Update ADR 0012. A product decision is needed on when older-version handling can be retired.
 - **Category:** Data integrity · **Type:** Defect (crash-window ordering) · **Severity:** Medium · **Confidence:** Confirmed (verified ordering) · **Effort:** S · **Source:** ARCH-2
 - **Evidence:**
   - `feature/mockexam/MockExamCoordinator.kt:154-159` calls `archiveCompletedExam(...)` and then `saveExam(completed)`.

@@ -124,6 +124,177 @@ class MockExamViewModelTest {
         )
     }
 
+    // F-04: an answer tapped before the deadline whose save is still running when the
+    // timer expires must be part of the graded result.
+    @Test
+    fun answerTappedAtDeadlineWithPendingSave_isCountedInResult() = runViewModelTest {
+        val gatedPreferences = GatedMockExamPreferencesRepository(preferencesRepository)
+        val viewModel = createViewModel(preferences = gatedPreferences)
+        viewModel.startExam()
+        val questionId = (viewModel.uiState.value as MockExamUiState.Ready).question.id
+
+        gatedPreferences.holdNextSave()
+        viewModel.selectAnswer("A")
+        now += MockExamCoordinator.EXAM_DURATION_MILLIS
+        tick()
+        gatedPreferences.releaseSave()
+        runCurrent()
+
+        val state = viewModel.uiState.value
+        assertTrue("Expected Result but was $state", state is MockExamUiState.Result)
+        val result = state as MockExamUiState.Result
+        assertTrue(result.submittedByTimeout)
+        assertEquals(1, result.correctCount)
+        assertEquals(MockExamCoordinator.QUESTION_COUNT - 1, result.unansweredCount)
+        val archived = contentRepository.mockExamResults.single().summary
+        assertEquals(1, archived.correctCount)
+        assertEquals(MockExamCoordinator.QUESTION_COUNT - 1, archived.unansweredCount)
+        assertEquals(
+            mapOf(questionId to "A"),
+            requireNotNull(preferencesRepository.saved.value).selectedAnswers,
+        )
+    }
+
+    // F-04 guard: resolving a pending save at the deadline must submit exactly once.
+    // Counts calls, because the attempt-ID dedupe would hide a second submit in history.
+    @Test
+    fun pendingSaveAtDeadline_submitsExactlyOnce() = runViewModelTest {
+        val gatedPreferences = GatedMockExamPreferencesRepository(preferencesRepository)
+        val viewModel = createViewModel(preferences = gatedPreferences)
+        viewModel.startExam()
+
+        gatedPreferences.holdNextSave()
+        viewModel.selectAnswer("A")
+        now += MockExamCoordinator.EXAM_DURATION_MILLIS
+        tick()
+        gatedPreferences.releaseSave()
+        runCurrent()
+        repeat(3) { tick() }
+
+        assertTrue(viewModel.uiState.value is MockExamUiState.Result)
+        assertEquals(1, contentRepository.recordCalls)
+        assertEquals(1, preferencesRepository.completedSaves)
+    }
+
+    // F-04 guard: while the timeout submit is running, answer and navigation taps must
+    // not save an incomplete snapshot over the completed one.
+    @Test
+    fun timeoutSubmitInFlight_ignoresAnswerAndNavigationTaps() = runViewModelTest {
+        val gatedPreferences = GatedMockExamPreferencesRepository(preferencesRepository)
+        val viewModel = createViewModel(preferences = gatedPreferences)
+        viewModel.startExam()
+
+        gatedPreferences.holdNextSave()
+        now += MockExamCoordinator.EXAM_DURATION_MILLIS
+        tick()
+        // The timeout submit is now held while saving the completed snapshot.
+        assertTrue(viewModel.uiState.value is MockExamUiState.Ready)
+        viewModel.selectAnswer("A")
+        viewModel.nextQuestion()
+        gatedPreferences.releaseSave()
+        runCurrent()
+
+        val state = viewModel.uiState.value
+        assertTrue("Expected Result but was $state", state is MockExamUiState.Result)
+        assertEquals(MockExamCoordinator.QUESTION_COUNT, (state as MockExamUiState.Result).unansweredCount)
+        val saved = requireNotNull(preferencesRepository.saved.value)
+        assertTrue("Completed snapshot was overwritten", saved.isComplete)
+        assertTrue(saved.selectedAnswers.isEmpty())
+        assertEquals(1, contentRepository.recordCalls)
+    }
+
+    // F-04 guard: a pending answer save that fails at the deadline shows Error without
+    // submitting, and retry then submits by timeout on restore.
+    @Test
+    fun pendingSaveFailsAtDeadline_showsErrorThenRetrySubmitsByTimeout() = runViewModelTest {
+        val gatedPreferences = GatedMockExamPreferencesRepository(preferencesRepository)
+        val viewModel = createViewModel(preferences = gatedPreferences)
+        viewModel.startExam()
+
+        gatedPreferences.holdNextSave()
+        viewModel.selectAnswer("A")
+        now += MockExamCoordinator.EXAM_DURATION_MILLIS
+        tick()
+        gatedPreferences.failSave(IllegalStateException("Simulated save failure"))
+        runCurrent()
+
+        assertEquals(MockExamUiState.Error, viewModel.uiState.value)
+        assertEquals(0, contentRepository.recordCalls)
+        assertFalse(requireNotNull(preferencesRepository.saved.value).isComplete)
+
+        viewModel.retry()
+
+        val state = viewModel.uiState.value
+        assertTrue("Expected Result but was $state", state is MockExamUiState.Result)
+        assertTrue((state as MockExamUiState.Result).submittedByTimeout)
+        assertEquals(1, contentRepository.recordCalls)
+    }
+
+    // F-04 guard: retry() after a failed manual submit must clear the submission lock,
+    // or the learner could no longer answer or submit.
+    @Test
+    fun submitFailureThenRetry_acceptsAnswersAgain() = runViewModelTest {
+        val viewModel = createViewModel()
+        viewModel.startExam()
+        viewModel.selectAnswer("A")
+        preferencesRepository.failNextCompletedSave = true
+        viewModel.confirmSubmit()
+        assertEquals(MockExamUiState.Error, viewModel.uiState.value)
+
+        viewModel.retry()
+        assertEquals("A", (viewModel.uiState.value as MockExamUiState.Ready).selectedAnswerId)
+        viewModel.selectAnswer("B")
+        assertEquals("B", (viewModel.uiState.value as MockExamUiState.Ready).selectedAnswerId)
+        viewModel.confirmSubmit()
+
+        val state = viewModel.uiState.value
+        assertTrue("Expected Result but was $state", state is MockExamUiState.Result)
+        assertFalse((state as MockExamUiState.Result).submittedByTimeout)
+        assertEquals(1, contentRepository.recordCalls)
+        assertEquals(1, contentRepository.mockExamResults.size)
+    }
+
+    // F-04 guard: startNewExam() after a result must clear the submission lock.
+    @Test
+    fun startNewExamAfterResult_acceptsAnswers() = runViewModelTest {
+        val viewModel = createViewModel()
+        viewModel.startExam()
+        viewModel.confirmSubmit()
+        assertTrue(viewModel.uiState.value is MockExamUiState.Result)
+
+        viewModel.startNewExam()
+        viewModel.startExam()
+        viewModel.selectAnswer("A")
+
+        val ready = viewModel.uiState.value as MockExamUiState.Ready
+        assertEquals("A", ready.selectedAnswerId)
+        assertEquals(1, ready.answeredCount)
+    }
+
+    // F-05: after a crash between archiving and saving the completed snapshot, the next
+    // launch must show the result that history stores, not a resumable exam.
+    @Test
+    fun restartAfterArchiveCrash_showsResultMatchingHistory() = runViewModelTest {
+        val firstViewModel = createViewModel()
+        firstViewModel.startExam()
+        firstViewModel.selectAnswer("A")
+        contentRepository.failNextRecord = true
+        firstViewModel.confirmSubmit()
+        assertEquals(MockExamUiState.Error, firstViewModel.uiState.value)
+
+        // Simulates process death: the next ViewModel restores from preferences.
+        viewModelStore.clear()
+        val restoredViewModel = createViewModel()
+
+        val state = restoredViewModel.uiState.value
+        assertTrue("Expected Result but was $state", state is MockExamUiState.Result)
+        val result = state as MockExamUiState.Result
+        val archived = contentRepository.mockExamResults.single().summary
+        assertEquals(1, result.correctCount)
+        assertEquals(archived.correctCount, result.correctCount)
+        assertEquals(archived.unansweredCount, result.unansweredCount)
+    }
+
     private fun runViewModelTest(body: suspend TestScope.() -> Unit) = runTest {
         try {
             body()
@@ -179,11 +350,19 @@ private class GatedMockExamPreferencesRepository(
         gate?.complete(Unit)
     }
 
+    fun failSave(cause: Throwable) {
+        gate?.completeExceptionally(cause)
+    }
+
     override suspend fun getExam(): MockExamSnapshot? = delegate.getExam()
 
     override suspend fun saveExam(exam: MockExamSnapshot) {
-        gate?.await()
-        gate = null
+        try {
+            gate?.await()
+        } finally {
+            // One-shot, also when the held save fails or is cancelled.
+            gate = null
+        }
         delegate.saveExam(exam)
     }
 

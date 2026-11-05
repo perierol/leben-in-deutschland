@@ -1,0 +1,19 @@
+# Command: ./gradlew :app:testDebugUnitTest --tests '*MockExamCoordinatorTest*'  (run from android/)
+# Run: 2026-11-05, review follow-up step 1 RED: cancellation test added, NonCancellable not yet applied
+# Source: JUnit XML (stack traces trimmed to the test frame)
+
+MockExamCoordinatorTest: tests=10 failures=1 errors=0 skipped=0
+  PASS restoreBackfillsLegacyCompletedExamWithoutCountingProgressTwice
+  PASS selectedAnswerAndCurrentQuestionArePersisted
+  FAIL cancellationDuringArchive_stillRecordsHistoryAndProgress
+       java.lang.AssertionError: expected:<1> but was:<0>
+       at com.nextdaymobilestudio.lebenindeutschland.feature.mockexam.MockExamCoordinatorTest$cancellationDuringArchive_stillRecordsHistoryAndProgress$1.invokeSuspend(MockExamCoordinatorTest.kt:196)
+  PASS oneResultAppliesBothOfficialPassThresholds
+  PASS completedSaveFailure_leavesNoOrphanHistoryRow
+  PASS submitRecordsAnsweredQuestionsAndLeavesBlanksUnchanged
+  PASS restoreReturnsMatchingExamAndClearsStaleSelection
+  PASS startRejectsCatalogWithoutThreeStateQuestions
+  PASS startCreatesThirtyGeneralAndThreeStateQuestions
+  PASS archiveFailure_restoreReturnsCompletedExam
+
+TOTAL tests=10 failed=1

@@ -27,6 +27,10 @@ class MockExamViewModel(
     private var actionJob: Job? = null
     private var timerJob: Job? = null
 
+    // Set once a manual or timeout submission starts, so no answer or navigation
+    // save can overwrite the completed snapshot. Cleared by retry() and startNewExam().
+    private var isSubmitting = false
+
     init {
         retry()
     }
@@ -34,6 +38,7 @@ class MockExamViewModel(
     fun retry() {
         actionJob?.cancel()
         timerJob?.cancel()
+        isSubmitting = false
         actionJob = viewModelScope.launch {
             _uiState.value = MockExamUiState.Loading
             runAction {
@@ -67,7 +72,7 @@ class MockExamViewModel(
     fun selectAnswer(answerId: String) {
         val current = _uiState.value as? MockExamUiState.Ready ?: return
         val loadedExam = exam ?: return
-        if (current.isSaving) return
+        if (current.isSaving || isSubmitting) return
         actionJob = viewModelScope.launch {
             _uiState.value = current.copy(
                 selectedAnswerId = answerId,
@@ -85,9 +90,10 @@ class MockExamViewModel(
                     answerId = answerId,
                 )
                 exam = updatedExam
-                _uiState.value = (_uiState.value as MockExamUiState.Ready).copy(
-                    isSaving = false,
-                )
+                val latest = _uiState.value
+                if (latest is MockExamUiState.Ready) {
+                    _uiState.value = latest.copy(isSaving = false)
+                }
             }
         }
     }
@@ -111,7 +117,8 @@ class MockExamViewModel(
     fun confirmSubmit() {
         val current = _uiState.value as? MockExamUiState.Ready ?: return
         val loadedExam = exam ?: return
-        if (current.isSaving) return
+        if (current.isSaving || isSubmitting) return
+        isSubmitting = true
         actionJob?.cancel()
         actionJob = viewModelScope.launch {
             _uiState.value = current.copy(
@@ -125,6 +132,7 @@ class MockExamViewModel(
     fun startNewExam() {
         actionJob?.cancel()
         timerJob?.cancel()
+        isSubmitting = false
         actionJob = viewModelScope.launch {
             _uiState.value = MockExamUiState.Loading
             runAction {
@@ -138,7 +146,7 @@ class MockExamViewModel(
     private fun moveBy(offset: Int) {
         val current = _uiState.value as? MockExamUiState.Ready ?: return
         val loadedExam = exam ?: return
-        if (current.isSaving) return
+        if (current.isSaving || isSubmitting) return
         val targetIndex = (current.currentIndex + offset)
             .coerceIn(0, current.totalCount - 1)
         if (targetIndex == current.currentIndex) return
@@ -178,9 +186,18 @@ class MockExamViewModel(
                 if (loadedExam.isComplete) return@launch
                 val remainingSeconds = remainingSeconds(loadedExam)
                 if (remainingSeconds <= 0) {
-                    actionJob?.cancel()
+                    if (isSubmitting) return@launch
+                    isSubmitting = true
+                    // Let an answer or navigation save that started before the deadline
+                    // finish, then submit the latest snapshot instead of a stale copy.
+                    val pendingAction = actionJob
                     actionJob = viewModelScope.launch {
-                        runAction { submit(loadedExam, submittedByTimeout = true) }
+                        pendingAction?.join()
+                        val latestExam = exam ?: return@launch
+                        if (latestExam.isComplete || _uiState.value !is MockExamUiState.Ready) {
+                            return@launch
+                        }
+                        runAction { submit(latestExam, submittedByTimeout = true) }
                     }
                     return@launch
                 }

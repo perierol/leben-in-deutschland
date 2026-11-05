@@ -1,0 +1,14 @@
+# From Gradle reports of `./gradlew assembleDebug lintDebug testDebugUnitTest --stacktrace` (run from android/), 2026-11-05
+# Branch fix/android-mock-exam-submit-integrity, base f7acff4, F-04 + F-05 fixes applied. Console log kept local (absolute paths).
+build: BUILD SUCCESSFUL, exit 0
+apk: outputs/apk/debug/app-debug.apk (21:04:18)
+unit tests: 82 tests in 17 classes, 0 failed, 0 skipped
+lint severities: {'Warning': 56}
+lint ids: {'PluralsCandidate': 27, 'NewerVersionAvailable': 7, 'UnusedResources': 7, 'GradleDependency': 6, 'ModifierParameter': 3, 'AndroidGradlePluginVersion': 2, 'MonochromeLauncherIcon': 2, 'EmptySuperCall': 1, 'RedundantLabel': 1}
+lint vs F-09 baseline (55): +1 NewerVersionAvailable for kotlinx-coroutines-test 1.10.2 -> 1.11.0 (dependency added in #32, online version check); no other change
+lint in feature/mockexam: EmptySuperCall MockExamViewModel.kt:247 (pre-existing `super.onCleared()`, line 230 on main)
+
+# Rerun after the PR-D review follow-up (NonCancellable in MockExamCoordinator.submit, guard tests), same command, 2026-11-05
+build: BUILD SUCCESSFUL, exit 0
+unit tests: 86 tests in 17 classes, 0 failed, 0 skipped
+lint severities: {'Warning': 56} (unchanged; same ids as above)
