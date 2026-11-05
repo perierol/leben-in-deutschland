@@ -1,0 +1,4 @@
+# Explanation length in study_content (dedicated emulator DB, read-only copy), 2026-11-05
+# Merged card announcement ≈ verdict (18) + 'Erklärung' (9) + explanation
+lang=de n=460 chars: min=64 median=168 p90=240 max=344 | words: median=22 p90=33 max=46
+  approx TTS seconds at ~150 wpm (words+4): median=10s p90=15s max=20s

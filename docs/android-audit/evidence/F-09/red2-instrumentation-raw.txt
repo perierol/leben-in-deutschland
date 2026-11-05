@@ -1,0 +1,129 @@
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest:
+INSTRUMENTATION_STATUS: test=onlyVerdictIsPoliteLiveRegion
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed to assert the following: (NOT (Text + InputText + EditableText contains 'Das ist die Erklärung.' (ignoreCase: false)))
+Semantics of the node:
+Node #65 at (l=53.0, t=1363.0, r=1027.0, b=1696.0)px, Tag: 'study-session-explanation'
+IsContainer = 'true'
+LiveRegion = 'Polite'
+Shape = 'RoundedCornerShape(topStart = CornerSize(size = 20.0.dp), topEnd = CornerSize(size = 20.0.dp), bottomEnd = CornerSize(size = 20.0.dp), bottomStart = CornerSize(size = 20.0.dp))'
+Text = '[Noch nicht richtig, Erklärung, Das ist die Erklärung.]'
+Actions = [ClearTextSubstitution, GetTextLayoutResult, SetTextSubstitution, ShowTextSubstitution]
+MergeDescendants = 'true'
+Has 6 siblings
+Selector used: (Text + InputText + EditableText contains 'Noch nicht richtig' (ignoreCase: false))
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:293)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:283)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.onlyVerdictIsPoliteLiveRegion(StudySessionScreenTest.kt:206)
+
+INSTRUMENTATION_STATUS: stream=
+Error in onlyVerdictIsPoliteLiveRegion(com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest):
+java.lang.AssertionError: Failed to assert the following: (NOT (Text + InputText + EditableText contains 'Das ist die Erklärung.' (ignoreCase: false)))
+Semantics of the node:
+Node #65 at (l=53.0, t=1363.0, r=1027.0, b=1696.0)px, Tag: 'study-session-explanation'
+IsContainer = 'true'
+LiveRegion = 'Polite'
+Shape = 'RoundedCornerShape(topStart = CornerSize(size = 20.0.dp), topEnd = CornerSize(size = 20.0.dp), bottomEnd = CornerSize(size = 20.0.dp), bottomStart = CornerSize(size = 20.0.dp))'
+Text = '[Noch nicht richtig, Erklärung, Das ist die Erklärung.]'
+Actions = [ClearTextSubstitution, GetTextLayoutResult, SetTextSubstitution, ShowTextSubstitution]
+MergeDescendants = 'true'
+Has 6 siblings
+Selector used: (Text + InputText + EditableText contains 'Noch nicht richtig' (ignoreCase: false))
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:293)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:283)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.onlyVerdictIsPoliteLiveRegion(StudySessionScreenTest.kt:206)
+
+INSTRUMENTATION_STATUS: test=onlyVerdictIsPoliteLiveRegion
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=verdictRevealDoesNotRepeatOnRecomposition
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=verdictRevealDoesNotRepeatOnRecomposition
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=submittedAnswerShowsCollapsedMemoryKeyAndExpandedExplanation
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=submittedAnswerShowsCollapsedMemoryKeyAndExpandedExplanation
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=submittingAnswerRevealsVerdictWithoutManualScroll
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Assert failed: The component with Text + InputText + EditableText contains 'Noch nicht richtig' (ignoreCase: false) is not displayed!
+	at androidx.compose.ui.test.AssertionsKt.assertIsDisplayed(Assertions.kt:34)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.submittingAnswerRevealsVerdictWithoutManualScroll(StudySessionScreenTest.kt:228)
+
+INSTRUMENTATION_STATUS: stream=
+Error in submittingAnswerRevealsVerdictWithoutManualScroll(com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest):
+java.lang.AssertionError: Assert failed: The component with Text + InputText + EditableText contains 'Noch nicht richtig' (ignoreCase: false) is not displayed!
+	at androidx.compose.ui.test.AssertionsKt.assertIsDisplayed(Assertions.kt:34)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.submittingAnswerRevealsVerdictWithoutManualScroll(StudySessionScreenTest.kt:228)
+
+INSTRUMENTATION_STATUS: test=submittingAnswerRevealsVerdictWithoutManualScroll
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 4.977
+There were 2 failures:
+1) onlyVerdictIsPoliteLiveRegion(com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest)
+java.lang.AssertionError: Failed to assert the following: (NOT (Text + InputText + EditableText contains 'Das ist die Erklärung.' (ignoreCase: false)))
+Semantics of the node:
+Node #65 at (l=53.0, t=1363.0, r=1027.0, b=1696.0)px, Tag: 'study-session-explanation'
+IsContainer = 'true'
+LiveRegion = 'Polite'
+Shape = 'RoundedCornerShape(topStart = CornerSize(size = 20.0.dp), topEnd = CornerSize(size = 20.0.dp), bottomEnd = CornerSize(size = 20.0.dp), bottomStart = CornerSize(size = 20.0.dp))'
+Text = '[Noch nicht richtig, Erklärung, Das ist die Erklärung.]'
+Actions = [ClearTextSubstitution, GetTextLayoutResult, SetTextSubstitution, ShowTextSubstitution]
+MergeDescendants = 'true'
+Has 6 siblings
+Selector used: (Text + InputText + EditableText contains 'Noch nicht richtig' (ignoreCase: false))
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:293)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:283)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.onlyVerdictIsPoliteLiveRegion(StudySessionScreenTest.kt:206)
+2) submittingAnswerRevealsVerdictWithoutManualScroll(com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest)
+java.lang.AssertionError: Assert failed: The component with Text + InputText + EditableText contains 'Noch nicht richtig' (ignoreCase: false) is not displayed!
+	at androidx.compose.ui.test.AssertionsKt.assertIsDisplayed(Assertions.kt:34)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.submittingAnswerRevealsVerdictWithoutManualScroll(StudySessionScreenTest.kt:228)
+
+FAILURES!!!
+Tests run: 4,  Failures: 2
+
+
+INSTRUMENTATION_CODE: -1

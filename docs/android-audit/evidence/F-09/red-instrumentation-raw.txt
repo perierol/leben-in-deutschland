@@ -1,0 +1,145 @@
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=
+com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest:
+INSTRUMENTATION_STATUS: test=submittedWrongAnswerExposesStateDescriptions
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed to assert the following: (StateDescription = 'Correct')
+Semantics of the node:
+Node #41 at (l=53.0, t=879.0, r=1027.0, b=1084.0)px, Tag: 'study-session-answer-A'
+IsContainer = 'true'
+Role = 'RadioButton'
+Selected = 'false'
+Shape = 'RectangleShape'
+Text = '[A, Antwort A, Cevap A]'
+[Disabled]
+Actions = [ClearTextSubstitution, GetTextLayoutResult, OnClick, SetTextSubstitution, ShowTextSubstitution]
+MergeDescendants = 'true'
+Has 7 siblings
+Selector used: (TestTag = 'study-session-answer-A')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:293)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:283)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.submittedWrongAnswerExposesStateDescriptions(StudySessionScreenTest.kt:166)
+
+INSTRUMENTATION_STATUS: stream=
+Error in submittedWrongAnswerExposesStateDescriptions(com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest):
+java.lang.AssertionError: Failed to assert the following: (StateDescription = 'Correct')
+Semantics of the node:
+Node #41 at (l=53.0, t=879.0, r=1027.0, b=1084.0)px, Tag: 'study-session-answer-A'
+IsContainer = 'true'
+Role = 'RadioButton'
+Selected = 'false'
+Shape = 'RectangleShape'
+Text = '[A, Antwort A, Cevap A]'
+[Disabled]
+Actions = [ClearTextSubstitution, GetTextLayoutResult, OnClick, SetTextSubstitution, ShowTextSubstitution]
+MergeDescendants = 'true'
+Has 7 siblings
+Selector used: (TestTag = 'study-session-answer-A')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:293)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:283)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.submittedWrongAnswerExposesStateDescriptions(StudySessionScreenTest.kt:166)
+
+INSTRUMENTATION_STATUS: test=submittedWrongAnswerExposesStateDescriptions
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=explanationCardIsPoliteLiveRegion
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed to assert the following: (LiveRegion = 'Polite')
+Semantics of the node:
+Node #139 at (l=53.0, t=1363.0, r=1027.0, b=1696.0)px, Tag: 'study-session-explanation'
+IsContainer = 'true'
+Shape = 'RoundedCornerShape(topStart = CornerSize(size = 20.0.dp), topEnd = CornerSize(size = 20.0.dp), bottomEnd = CornerSize(size = 20.0.dp), bottomStart = CornerSize(size = 20.0.dp))'
+Has 3 children, 6 siblings
+Selector used: (TestTag = 'study-session-explanation')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:293)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:283)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.explanationCardIsPoliteLiveRegion(StudySessionScreenTest.kt:194)
+
+INSTRUMENTATION_STATUS: stream=
+Error in explanationCardIsPoliteLiveRegion(com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest):
+java.lang.AssertionError: Failed to assert the following: (LiveRegion = 'Polite')
+Semantics of the node:
+Node #139 at (l=53.0, t=1363.0, r=1027.0, b=1696.0)px, Tag: 'study-session-explanation'
+IsContainer = 'true'
+Shape = 'RoundedCornerShape(topStart = CornerSize(size = 20.0.dp), topEnd = CornerSize(size = 20.0.dp), bottomEnd = CornerSize(size = 20.0.dp), bottomStart = CornerSize(size = 20.0.dp))'
+Has 3 children, 6 siblings
+Selector used: (TestTag = 'study-session-explanation')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:293)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:283)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.explanationCardIsPoliteLiveRegion(StudySessionScreenTest.kt:194)
+
+INSTRUMENTATION_STATUS: test=explanationCardIsPoliteLiveRegion
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=submittedAnswerShowsCollapsedMemoryKeyAndExpandedExplanation
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=submittedAnswerShowsCollapsedMemoryKeyAndExpandedExplanation
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 5.681
+There were 2 failures:
+1) submittedWrongAnswerExposesStateDescriptions(com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest)
+java.lang.AssertionError: Failed to assert the following: (StateDescription = 'Correct')
+Semantics of the node:
+Node #41 at (l=53.0, t=879.0, r=1027.0, b=1084.0)px, Tag: 'study-session-answer-A'
+IsContainer = 'true'
+Role = 'RadioButton'
+Selected = 'false'
+Shape = 'RectangleShape'
+Text = '[A, Antwort A, Cevap A]'
+[Disabled]
+Actions = [ClearTextSubstitution, GetTextLayoutResult, OnClick, SetTextSubstitution, ShowTextSubstitution]
+MergeDescendants = 'true'
+Has 7 siblings
+Selector used: (TestTag = 'study-session-answer-A')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:293)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:283)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.submittedWrongAnswerExposesStateDescriptions(StudySessionScreenTest.kt:166)
+2) explanationCardIsPoliteLiveRegion(com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest)
+java.lang.AssertionError: Failed to assert the following: (LiveRegion = 'Polite')
+Semantics of the node:
+Node #139 at (l=53.0, t=1363.0, r=1027.0, b=1696.0)px, Tag: 'study-session-explanation'
+IsContainer = 'true'
+Shape = 'RoundedCornerShape(topStart = CornerSize(size = 20.0.dp), topEnd = CornerSize(size = 20.0.dp), bottomEnd = CornerSize(size = 20.0.dp), bottomStart = CornerSize(size = 20.0.dp))'
+Has 3 children, 6 siblings
+Selector used: (TestTag = 'study-session-explanation')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:293)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:283)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.studysession.StudySessionScreenTest.explanationCardIsPoliteLiveRegion(StudySessionScreenTest.kt:194)
+
+FAILURES!!!
+Tests run: 3,  Failures: 2
+
+
+INSTRUMENTATION_CODE: -1
