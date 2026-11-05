@@ -3,6 +3,8 @@
 Audit date: 2026-11-05 · Branch: `chore/add-compose-reviewer` · Base commit: `e43187f`
 Scope: `android/` module `:app`, `firestore.rules`, Android CI, ADRs 0001–0013, `docs/product-specification.md`.
 
+Findings describe the code at `e43187f`. Later changes are added as dated **Update** notes. The original finding text is kept as the historical record.
+
 Paths below are relative to `android/app/src/main/java/com/nextdaymobilestudio/lebenindeutschland/` unless they start with `android/`, `docs/`, `.github/` or `firestore.rules`.
 
 ## Legend
@@ -190,6 +192,12 @@ Ranked by production risk, then how well each fits a focused PR.
   - **Visual:** check with Developer options → Simulate colour space (deuteranomaly) and at 200% font scale, to see whether the card ends up off-screen. Check contrast on the dark scheme only.
 
 ### F-10 · Documented stack and requirements differ from the implementation (Auth, Hilt, WorkManager)
+- **Update (2026-11-05, after #29, `main` @ `e495240`):** this finding is **partly resolved**.
+  - **Anonymous Firebase Authentication is now implemented.** `FirebaseAnonymousAuthenticator` signs in before the first content sync (wired in `FirebaseContentSynchronizerFactory.kt`), and `firebase-auth` is a dependency.
+  - **Hilt and WorkManager are still not implemented** (no references in `android/app`), but the `main` README still lists both (`README.md:64-65`). DI remains the manual container.
+  - The README no longer points to `firebase/` for the rules.
+  - Progress is still local-only.
+  - The "matches the privacy policy" statement in *Impact* below needs re-checking (see *Done well → Privacy*).
 - **Category:** Requirements / Documentation · **Type:** Defect (documentation drift) · **Severity:** Medium · **Confidence:** Confirmed (verified) · **Effort:** S (docs) / L (implementing auth) · **Source:** LEAD, SEC-4, ARCH drift list
 - **Evidence:**
   - A grep of `android/app/src` finds no `FirebaseAuth`, `signInAnonymously`, `Hilt`/`@Inject` or `WorkManager`.
@@ -215,7 +223,7 @@ Ranked by production risk, then how well each fits a focused PR.
 | F-16 | Accessibility / RTL | Memory-key arrow `→` is hardcoded LTR. German and translated text have no locale span for TTS. | Defect / Suggestion | Low | Confirmed / Needs verification | `StudySessionScreen.kt:292`, `ContentPackageMapper.kt:506` | AutoMirrored icon. `SpanStyle(localeList = LocaleList("de"))`. | S | UI-7 |
 | F-17 | Security | Remote image URLs are not restricted to https and allowlisted hosts, and image sha256 is not verified | Safeguard | Low | Confirmed | `ContentPackageMapper.kt:365-367`, `StudySessionScreen.kt:437`, `MockExamScreen.kt:493` | Validate scheme and host in the mapper | S | SEC-1 |
 | F-18 | Security | No network security config. Cleartext is allowed on API 24–27 (`minSdk 24`). | Safeguard | Low | Confirmed | Manifest has no `networkSecurityConfig` | Add `cleartextTrafficPermitted="false"` | S | SEC-2 |
-| F-19 | Security / Cost | Public Firestore reads without App Check | Risk | Low–Med | Probable | `firestore.rules:6,11` | App Check (Play Integrity) and a budget alert | M | SEC-3 |
+| F-19 | Security / Cost | Public Firestore reads without App Check. **Update (2026-11-05, #29):** reads now require `request.auth != null` (`firestore.rules:14,19` on `main`). Anonymous accounts can be created by any client, so App Check stays a separate safeguard against scripted reads. Residual severity: Low. | Risk | Low–Med (audit) → Low | Probable | `firestore.rules:6,11` (at audit) | App Check (Play Integrity) and a budget alert | M | SEC-3 |
 | F-20 | Architecture | `LocalContentRepository` has default implementations whose semantics differ from Room (no-op `clearStudyProgress`, `recordMockExamResult` returns `true` without storing, prefix-based state filter) | Safeguard | Medium | Confirmed | `core/database/repository/LocalContentRepository.kt:45-53,65,101-133` | Remove defaults. Split into Content, Progress and History repositories. Add contract tests. | M | ARCH-8 |
 | F-21 | Data integrity | Release install is several transactions, and German is re-downloaded when only the selected language is missing | Safeguard | Low | Confirmed | `ContentSyncCoordinator.kt:67,82-85` | One `installAndActivate` transaction. Download only missing packages. | S | ARCH-9 |
 | F-22 | Testing | Migration tests don't assert user progress or history survive. There is no 1→4 chain test. | Safeguard | Medium | Confirmed | `androidTest/.../LocalContentDatabaseMigrationTest.kt:20,61,104` | `migrateAll_1To4_preservesStudyProgressAndHistory` | S | TEST-6 |
@@ -238,4 +246,6 @@ Ranked by production risk, then how well each fits a focused PR.
 - **Room:** explicit migrations, exported schemas v1–v4, no `fallbackToDestructiveMigration`, and an atomic, idempotent mock-exam archive.
 - **Process death:** Navigation3 keys are `@Serializable`, and the back stack and study position were restored after `am kill` on the emulator. The mock-exam deadline is persisted.
 - **Compose:** `collectAsStateWithLifecycle` at routes, `selectableGroup`/`Role.RadioButton` on answers, stable lazy keys, `AutoMirrored` icons, `supportsRtl`, and per-app locales.
-- **Privacy:** no analytics or crash SDKs, and the policy at `website/privacy` matches app behaviour.
+- **Privacy (at audit time):** no analytics or crash SDKs, and the policy at `website/privacy` matched app behaviour.
+  - **Update (2026-11-05, after #29): NEEDS VERIFICATION.** Anonymous Firebase Authentication now creates a persistent Firebase user ID. The policy on `main` says the app "requires no user account" (`website/privacy/en/index.html:30`) and does not mention Firebase Authentication.
+  - Re-check the privacy policy and the Play Data safety declaration. This is a product and legal decision; it was not re-audited here.

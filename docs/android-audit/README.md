@@ -28,6 +28,11 @@ These are not caught today. **No ViewModel is unit-tested, and the instrumented 
 
 Anonymous Firebase Auth, Hilt and WorkManager are documented in the README and spec but **not implemented** (F-10). Right now that is a documentation issue, not a security one, because progress is local-only.
 
+> **Update (2026-11-05, after #29):**
+> - Anonymous Firebase Authentication is now implemented, and Firestore content reads require an authenticated caller. Hilt and WorkManager are still not implemented (see F-10).
+> - The audit's privacy-policy claim now **needs verification** (see *Done well → Privacy* in `findings.md`).
+> - F-19 (App Check) remains open at Low severity.
+
 Severity count: Critical 0 · High 4 · Medium 12 · Low–Medium 1 · Low 15.
 
 ## Method
