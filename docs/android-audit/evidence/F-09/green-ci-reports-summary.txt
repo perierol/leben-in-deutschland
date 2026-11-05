@@ -1,0 +1,6 @@
+# Summarised from Gradle reports produced by `./gradlew lintDebug testDebugUnitTest` (green-ci-checks.txt)
+unit test XML files: 16 (newest 2026-11-05 12:03:48)
+unit tests: 67  failures: 0  errors: 0  skipped: 0
+lint report: app/build/reports/lint-results-debug.xml (modified 2026-11-05 12:03:56)
+lint severities: {'Warning': 55}
+lint ids: {'PluralsCandidate': 27, 'UnusedResources': 7, 'GradleDependency': 6, 'NewerVersionAvailable': 6, 'ModifierParameter': 3, 'AndroidGradlePluginVersion': 2, 'MonochromeLauncherIcon': 2, 'EmptySuperCall': 1, 'RedundantLabel': 1}

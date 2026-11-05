@@ -1,0 +1,538 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][1080,63]",
+    "content": [
+      {
+        "class": "android.widget.FrameLayout",
+        "bounds": "[0,0][1080,63]",
+        "center": "[540,31]",
+        "children": [
+          {
+            "class": "android.widget.FrameLayout",
+            "resource-id": "com.android.systemui:id/status_bar_launch_animation_container",
+            "bounds": "[0,0][1080,63]",
+            "center": "[540,31]"
+          },
+          {
+            "class": "android.widget.FrameLayout",
+            "resource-id": "com.android.systemui:id/status_bar_container",
+            "bounds": "[0,0][1080,63]",
+            "center": "[540,31]",
+            "children": [
+              {
+                "class": "android.widget.FrameLayout",
+                "resource-id": "com.android.systemui:id/status_bar",
+                "bounds": "[0,0][1080,63]",
+                "center": "[540,31]",
+                "children": [
+                  {
+                    "class": "android.widget.LinearLayout",
+                    "resource-id": "com.android.systemui:id/status_bar_contents",
+                    "bounds": "[0,0][1027,63]",
+                    "center": "[513,31]",
+                    "children": [
+                      {
+                        "class": "android.widget.FrameLayout",
+                        "resource-id": "com.android.systemui:id/status_bar_start_side_container",
+                        "bounds": "[11,0][513,63]",
+                        "center": "[262,31]",
+                        "children": [
+                          {
+                            "class": "android.widget.FrameLayout",
+                            "resource-id": "com.android.systemui:id/status_bar_start_side_content",
+                            "bounds": "[11,0][173,63]",
+                            "center": "[92,31]",
+                            "children": [
+                              {
+                                "class": "android.widget.LinearLayout",
+                                "resource-id": "com.android.systemui:id/status_bar_start_side_except_heads_up",
+                                "bounds": "[11,0][173,63]",
+                                "center": "[92,31]",
+                                "children": [
+                                  {
+                                    "class": "android.widget.TextView",
+                                    "resource-id": "com.android.systemui:id/clock",
+                                    "text": "1:06",
+                                    "content-desc": "1:06 PM",
+                                    "bounds": "[11,10][115,53]",
+                                    "center": "[63,31]"
+                                  },
+                                  {
+                                    "class": "android.widget.FrameLayout",
+                                    "resource-id": "com.android.systemui:id/notification_icon_area",
+                                    "bounds": "[115,0][173,63]",
+                                    "center": "[144,31]",
+                                    "children": [
+                                      {
+                                        "class": "android.view.ViewGroup",
+                                        "resource-id": "com.android.systemui:id/notificationIcons",
+                                        "bounds": "[115,0][173,63]",
+                                        "center": "[144,31]",
+                                        "children": [
+                                          {
+                                            "class": "android.widget.ImageView",
+                                            "content-desc": "Android System notification: ",
+                                            "bounds": "[115,0][173,63]",
+                                            "center": "[144,31]"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "class": "android.widget.FrameLayout",
+                        "resource-id": "com.android.systemui:id/status_bar_end_side_container",
+                        "bounds": "[513,0][1016,63]",
+                        "center": "[764,31]",
+                        "children": [
+                          {
+                            "class": "android.widget.LinearLayout",
+                            "resource-id": "com.android.systemui:id/status_bar_end_side_content",
+                            "bounds": "[876,0][1016,63]",
+                            "center": "[946,31]",
+                            "children": [
+                              {
+                                "class": "android.widget.LinearLayout",
+                                "resource-id": "com.android.systemui:id/system_icons",
+                                "bounds": "[876,2][1016,60]",
+                                "center": "[946,31]",
+                                "children": [
+                                  {
+                                    "class": "android.widget.LinearLayout",
+                                    "resource-id": "com.android.systemui:id/statusIcons",
+                                    "bounds": "[884,2][985,60]",
+                                    "center": "[934,31]",
+                                    "children": [
+                                      {
+                                        "class": "android.widget.FrameLayout",
+                                        "resource-id": "com.android.systemui:id/wifi_combo",
+                                        "bounds": "[884,2][930,60]",
+                                        "center": "[907,31]",
+                                        "children": [
+                                          {
+                                            "class": "android.widget.LinearLayout",
+                                            "resource-id": "com.android.systemui:id/wifi_group",
+                                            "bounds": "[891,2][930,60]",
+                                            "center": "[910,31]",
+                                            "children": [
+                                              {
+                                                "class": "android.widget.FrameLayout",
+                                                "resource-id": "com.android.systemui:id/wifi_combo",
+                                                "bounds": "[891,11][930,50]",
+                                                "center": "[910,30]",
+                                                "children": [
+                                                  {
+                                                    "class": "android.widget.ImageView",
+                                                    "resource-id": "com.android.systemui:id/wifi_signal",
+                                                    "content-desc": "Wifi signal full.",
+                                                    "bounds": "[891,11][930,50]",
+                                                    "center": "[910,30]"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "class": "android.widget.FrameLayout",
+                                        "off-screen": true,
+                                        "hidden": true
+                                      },
+                                      {
+                                        "class": "android.widget.FrameLayout",
+                                        "resource-id": "com.android.systemui:id/mobile_combo",
+                                        "content-desc": "T-Mobile, three bars.",
+                                        "bounds": "[930,2][969,60]",
+                                        "center": "[949,31]",
+                                        "children": [
+                                          {
+                                            "class": "android.widget.LinearLayout",
+                                            "resource-id": "com.android.systemui:id/mobile_group",
+                                            "bounds": "[930,2][969,60]",
+                                            "center": "[949,31]",
+                                            "children": [
+                                              {
+                                                "class": "android.widget.FrameLayout",
+                                                "bounds": "[930,11][969,50]",
+                                                "center": "[949,30]",
+                                                "children": [
+                                                  {
+                                                    "class": "android.widget.ImageView",
+                                                    "resource-id": "com.android.systemui:id/mobile_signal",
+                                                    "bounds": "[930,11][969,50]",
+                                                    "center": "[949,30]"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "class": "android.widget.LinearLayout",
+                                    "resource-id": "com.android.systemui:id/battery",
+                                    "content-desc": "Battery charging, 100 percent.",
+                                    "bounds": "[985,14][1005,48]",
+                                    "center": "[995,31]",
+                                    "children": [
+                                      {
+                                        "class": "android.widget.ImageView",
+                                        "bounds": "[985,14][1005,48]",
+                                        "center": "[995,31]"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "window-title": "Leben in Deutschland",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][1080,2400]",
+    "content": [
+      {
+        "class": "android.widget.FrameLayout",
+        "bounds": "[0,0][1080,2400]",
+        "center": "[540,1200]",
+        "children": [
+          {
+            "class": "android.widget.LinearLayout",
+            "bounds": "[0,0][1080,2400]",
+            "center": "[540,1200]",
+            "children": [
+              {
+                "class": "android.widget.FrameLayout",
+                "bounds": "[0,0][1080,2400]",
+                "center": "[540,1200]",
+                "children": [
+                  {
+                    "class": "android.widget.LinearLayout",
+                    "resource-id": "com.nextdaymobilestudio.lebenindeutschland:id/action_bar_root",
+                    "bounds": "[0,0][1080,2400]",
+                    "center": "[540,1200]",
+                    "children": [
+                      {
+                        "class": "android.widget.FrameLayout",
+                        "resource-id": "android:id/content",
+                        "bounds": "[0,0][1080,2400]",
+                        "center": "[540,1200]",
+                        "children": [
+                          {
+                            "class": "androidx.compose.ui.platform.ComposeView",
+                            "bounds": "[0,0][1080,2400]",
+                            "center": "[540,1200]",
+                            "children": [
+                              {
+                                "class": "android.view.View",
+                                "bounds": "[0,0][1080,2400]",
+                                "center": "[540,1200]",
+                                "children": [
+                                  {
+                                    "class": "android.view.View",
+                                    "bounds": "[0,0][1080,2400]",
+                                    "center": "[540,1200]",
+                                    "children": [
+                                      {
+                                        "class": "android.view.View",
+                                        "bounds": "[0,0][1080,2400]",
+                                        "center": "[540,1200]",
+                                        "children": [
+                                          {
+                                            "class": "android.view.View",
+                                            "interactions": [
+                                              "SCROLLABLE"
+                                            ],
+                                            "bounds": "[0,241][1080,2090]",
+                                            "center": "[540,1165]",
+                                            "children": [
+                                              {
+                                                "class": "android.widget.TextView",
+                                                "text": "Frage 1 von 310",
+                                                "bounds": "[53,273][393,329]",
+                                                "center": "[223,301]"
+                                              },
+                                              {
+                                                "class": "android.widget.ProgressBar",
+                                                "bounds": "[53,350][1027,371]",
+                                                "center": "[540,360]"
+                                              },
+                                              {
+                                                "class": "android.view.View",
+                                                "interactions": [
+                                                  "CLICKABLE",
+                                                  "FOCUSABLE"
+                                                ],
+                                                "bounds": "[53,408][1027,555]",
+                                                "center": "[540,481]",
+                                                "children": [
+                                                  {
+                                                    "class": "android.widget.TextView",
+                                                    "text": "Merkhilfe",
+                                                    "bounds": "[106,454][911,510]",
+                                                    "center": "[508,482]"
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "class": "android.view.View",
+                                                "bounds": "[53,592][1027,908]",
+                                                "center": "[540,750]",
+                                                "children": [
+                                                  {
+                                                    "class": "android.widget.TextView",
+                                                    "text": "Eine Partei im Deutschen Bundestag will die Pressefreiheit abschaffen. Ist das möglich?",
+                                                    "bounds": "[106,645][974,855]",
+                                                    "center": "[540,750]"
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "class": "android.view.View",
+                                                "interactions": [
+                                                  "CHECKABLE"
+                                                ],
+                                                "state": [
+                                                  "CHECKED"
+                                                ],
+                                                "bounds": "[53,945][1027,1227]",
+                                                "center": "[540,1086]",
+                                                "children": [
+                                                  {
+                                                    "class": "android.view.View",
+                                                    "bounds": "[95,987][195,1087]",
+                                                    "center": "[145,1037]",
+                                                    "children": [
+                                                      {
+                                                        "class": "android.widget.TextView",
+                                                        "text": "A",
+                                                        "bounds": "[129,1009][161,1065]",
+                                                        "center": "[145,1037]"
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "class": "android.widget.TextView",
+                                                    "text": "Ja, wenn mehr als die Hälfte der Abgeordneten im Bundestag dafür sind.",
+                                                    "bounds": "[232,987][890,1185]",
+                                                    "center": "[561,1086]"
+                                                  },
+                                                  {
+                                                    "class": "android.widget.RadioButton",
+                                                    "bounds": "[53,945][1027,1227]",
+                                                    "center": "[540,1086]"
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "class": "android.view.View",
+                                                "interactions": [
+                                                  "CHECKABLE",
+                                                  "CLICKABLE"
+                                                ],
+                                                "bounds": "[53,1264][1027,1546]",
+                                                "center": "[540,1405]",
+                                                "children": [
+                                                  {
+                                                    "class": "android.view.View",
+                                                    "bounds": "[95,1306][195,1406]",
+                                                    "center": "[145,1356]",
+                                                    "children": [
+                                                      {
+                                                        "class": "android.widget.TextView",
+                                                        "text": "B",
+                                                        "bounds": "[130,1328][160,1384]",
+                                                        "center": "[145,1356]"
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "class": "android.widget.TextView",
+                                                    "text": "Ja, aber dazu müssen zwei Drittel der Abgeordneten im Bundestag dafür sein.",
+                                                    "bounds": "[232,1306][985,1504]",
+                                                    "center": "[608,1405]"
+                                                  },
+                                                  {
+                                                    "class": "android.widget.RadioButton",
+                                                    "bounds": "[53,1264][1027,1546]",
+                                                    "center": "[540,1405]"
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "class": "android.view.View",
+                                                "interactions": [
+                                                  "CHECKABLE",
+                                                  "CLICKABLE"
+                                                ],
+                                                "bounds": "[53,1583][1027,1865]",
+                                                "center": "[540,1724]",
+                                                "children": [
+                                                  {
+                                                    "class": "android.view.View",
+                                                    "bounds": "[95,1625][195,1725]",
+                                                    "center": "[145,1675]",
+                                                    "children": [
+                                                      {
+                                                        "class": "android.widget.TextView",
+                                                        "text": "C",
+                                                        "bounds": "[130,1647][161,1703]",
+                                                        "center": "[145,1675]"
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "class": "android.widget.TextView",
+                                                    "text": "Nein, denn die Pressefreiheit ist ein Grundrecht. Sie kann nicht abgeschafft werden.",
+                                                    "bounds": "[232,1625][890,1823]",
+                                                    "center": "[561,1724]"
+                                                  },
+                                                  {
+                                                    "class": "android.widget.RadioButton",
+                                                    "bounds": "[53,1583][1027,1865]",
+                                                    "center": "[540,1724]"
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "class": "android.view.View",
+                                                "interactions": [
+                                                  "CHECKABLE",
+                                                  "CLICKABLE"
+                                                ],
+                                                "bounds": "[53,1902][1027,2090]",
+                                                "center": "[540,1996]",
+                                                "children": [
+                                                  {
+                                                    "class": "android.view.View",
+                                                    "bounds": "[95,1944][195,2044]",
+                                                    "center": "[145,1994]",
+                                                    "children": [
+                                                      {
+                                                        "class": "android.widget.TextView",
+                                                        "text": "D",
+                                                        "bounds": "[130,1966][161,2022]",
+                                                        "center": "[145,1994]"
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "class": "android.widget.TextView",
+                                                    "text": "Nein, denn nur der Bundesrat kann die Pressefreiheit abschaffen.",
+                                                    "bounds": "[232,1944][985,2071]",
+                                                    "center": "[608,2007]"
+                                                  },
+                                                  {
+                                                    "class": "android.widget.RadioButton",
+                                                    "bounds": "[53,1902][1027,2090]",
+                                                    "center": "[540,1996]"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "class": "android.view.View",
+                                            "interactions": [
+                                              "CLICKABLE",
+                                              "FOCUSABLE"
+                                            ],
+                                            "bounds": "[43,90][169,216]",
+                                            "center": "[106,153]",
+                                            "children": [
+                                              {
+                                                "class": "android.view.View",
+                                                "content-desc": "Zurück",
+                                                "bounds": "[74,121][137,184]",
+                                                "center": "[105,152]"
+                                              },
+                                              {
+                                                "class": "android.widget.Button",
+                                                "bounds": "[53,100][158,205]",
+                                                "center": "[105,152]"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "class": "android.widget.TextView",
+                                            "text": "Fragen üben",
+                                            "bounds": "[205,110][556,194]",
+                                            "center": "[380,152]"
+                                          },
+                                          {
+                                            "class": "android.view.View",
+                                            "bounds": "[0,2090][1080,2400]",
+                                            "center": "[540,2245]",
+                                            "children": [
+                                              {
+                                                "class": "android.view.View",
+                                                "interactions": [
+                                                  "CLICKABLE",
+                                                  "FOCUSABLE"
+                                                ],
+                                                "bounds": "[53,2132][1027,2295]",
+                                                "center": "[540,2213]",
+                                                "children": [
+                                                  {
+                                                    "class": "android.widget.TextView",
+                                                    "text": "Nächste Frage",
+                                                    "bounds": "[388,2186][692,2242]",
+                                                    "center": "[540,2214]"
+                                                  },
+                                                  {
+                                                    "class": "android.widget.Button",
+                                                    "bounds": "[53,2132][1027,2295]",
+                                                    "center": "[540,2213]"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
