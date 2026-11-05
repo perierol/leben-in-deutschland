@@ -4,6 +4,14 @@
 
 A multilingual, offline-first study application for Germany's Leben in Deutschland and naturalization tests.
 
+<!-- Screenshots: drop 3–4 PNGs into docs/screenshots/ and uncomment.
+| Home | Study session | Mock exam | Languages |
+| --- | --- | --- | --- |
+| ![Home](docs/screenshots/home.png) | ![Study session](docs/screenshots/study.png) | ![Mock exam](docs/screenshots/exam.png) | ![Languages](docs/screenshots/languages.png) |
+-->
+
+The Android app is in closed testing on Google Play.
+
 The project is being developed as a production-minded Android and iOS application. Its purpose is not only to deliver a useful learning product, but also to demonstrate architecture, testing, performance, accessibility, security, and cross-platform engineering decisions.
 
 ## Project Status
@@ -99,6 +107,15 @@ firebase.json     Firebase CLI configuration
 scripts/content/  Content build, validation, and upload tooling
 website/          Public landing page and privacy policy
 ```
+
+## Licence
+
+No licence is granted. This repository is published so that the work can be read
+and reviewed, not reused: all rights to the source code are reserved.
+
+The German questions and answers come from the official state catalogue for the
+Leben in Deutschland test and are not owned by this project. The translations are
+generated and are not redistributable either.
 
 ## Security and Content Notice
 
