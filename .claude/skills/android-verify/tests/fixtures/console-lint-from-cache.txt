@@ -1,0 +1,5 @@
+> Task :app:testDebugUnitTest
+> Task :app:lintAnalyzeDebug FROM-CACHE
+> Task :app:lintReportDebug FROM-CACHE
+> Task :app:lintDebug
+BUILD SUCCESSFUL in 6s

@@ -1,0 +1,2 @@
+> Task :app:compileDebugKotlin FAILED
+BUILD FAILED in 9s

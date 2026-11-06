@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 9.4.1">
+
+    <issue
+        id="MissingTranslation"
+        severity="Error"
+        message="Synthetic error for parser tests"
+        category="Correctness"
+        priority="8"
+        summary="Incomplete translation">
+        <location
+            file="{REPO}/android/app/src/main/res/values/strings.xml"
+            line="3"
+            column="13"/>
+    </issue>
+
+</issues>

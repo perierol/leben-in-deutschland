@@ -1,6 +1,6 @@
 # AI-Assisted Android Engineering Workflow
 
-Status: **proposal**. Of the files described here, only this audit's documentation exists. The agent and skill definitions below are proposed and have not been created yet, pending approval.
+Status: **implemented** (2026-11-06). The four reviewer agents and the three skills below exist under `.claude/` and are committed with this document. The fix loop described in §3 as the original `android-pr` proposal is not implemented: `android-pr` became the PR gate, and the fix loop stays manual (§5).
 
 ## 1. Inventory: what already exists (checked 2026-11-05)
 
@@ -15,28 +15,30 @@ Status: **proposal**. Of the files described here, only this audit's documentati
 
 Rule: reuse these assets. Don't duplicate them. The proposed agents below cover scopes that `compose-reviewer` does not.
 
-## 2. Proposed subagents (`.claude/agents/`)
+## 2. Subagents (`.claude/agents/`)
 
-All of them are read-only (`tools: Read, Glob, Grep`), so a reviewer can never edit code or claim to have run anything. They all use the same output contract (§4).
+All of them are read-only (`tools: Read, Glob, Grep`, model Sonnet), so a reviewer can never edit code or claim to have run anything. They all use the same output contract (§4).
 
 | Agent | Scope | Doesn't cover (handled elsewhere) |
 |---|---|---|
-| `compose-reviewer` *(exists; keep)* | Compose state, lifecycle, recomposition, a11y semantics, RTL/l10n, timer UX | Repository/Room internals |
-| `android-architecture-reviewer` *(new)* | Layer boundaries, ViewModel/coordinator design, repositories, Room transactions and migrations, sync, DI container, Navigation3 keys, ADR drift | Compose UI details |
-| `android-testing-reviewer` *(new)* | Coverage map, coroutine/Flow/Room test practice, missing regression tests, test quality, CI test gating | Writing the tests |
-| `android-security-reviewer` *(new)* | Firestore rules, client trust boundaries, content integrity, storage and backup, manifest exposure, release hardening, CI supply chain, privacy-policy parity. **Never prints secret values.** | Play policy (use `play-policy-insights`) |
+| `compose-reviewer` | Compose state, lifecycle, recomposition, a11y semantics, RTL/l10n, timer UX | Repository/Room internals |
+| `android-architecture-reviewer` | Layer boundaries, ViewModel/coordinator design, repositories, Room transactions and migrations, sync, DI container (manual `AppContainer`; Koin planned), Navigation3 keys, ADR drift | Compose UI details |
+| `android-testing-reviewer` | Coverage map, coroutine/Flow/Room test practice, missing regression tests, test quality, CI test gating | Writing the tests |
+| `android-security-reviewer` | Firestore rules, client trust boundaries, content integrity, storage and backup, manifest exposure, release hardening, CI supply chain, privacy-policy parity. **Never prints secret values.** | Play policy (use `play-policy-insights`) |
 
-Each agent file follows the structure of `compose-reviewer.md`: role and boundaries, product context to verify against code, review workflow, scenario checks, severity, and output format. The prompts used in this audit are the starting point for each.
+## 3. Skills (`.claude/skills/`)
 
-## 3. Proposed skills (`.claude/skills/`)
+All three are invoked by the user only (`disable-model-invocation: true`), and none can edit code (`disallowed-tools: Edit, NotebookEdit`, plus guardrails that hold across turns).
 
-| Skill | Purpose | Uses |
+| Skill | Purpose | Writes |
 |---|---|---|
-| `android-audit` | Runs the four reviewers in parallel with a scope (full, or `git diff main...HEAD` paths). Merges and de-duplicates findings into `docs/android-audit/findings.md` format, re-reads cited lines for the top N, and marks each finding Verified or Unverified. | The 4 subagents |
-| `android-verify` | Runs the safe evidence pipeline and writes a dated evidence folder (§6). Reports executed, failed and not-run checks separately. | Gradle, `android` CLI, `android-cli` skill |
-| `android-pr` | For one finding ID: write the failing regression test first, then the fix, then `android-verify`, then update the finding's status and the before/after evidence. It stops for approval before any change to production code. | `android-skills:testing-setup`, `compose-reviewer` |
+| `/android-audit` | Runs the selected reviewers in parallel on a scope (`diff`, `pr <n>`, `range`, `full`, areas, features or paths). Merges and de-duplicates their findings against `findings.md`, classifies them as Regression, New, Existing or Documented limitation, and re-reads the cited lines for the top N. | One untracked report under `docs/android-audit/reports/` |
+| `/android-verify` | Runs allowlisted checks through `run_gradle.sh`: `ci` (the CI command), `ci --fresh` (unit tests and lint forced with per-task `--rerun`), `focused --tests … [--rerun]`, `instrumented` on a dedicated emulator, `release`, `content` and `remote`. `parse_reports.py` reads the JUnit and lint XML and reports Passed, Passed (up to date), Failed, Not run or Needs verification per check. Every summary records a **fingerprint** (commit plus uncommitted Android changes) so later steps can tell whether it still describes the code. | Scratchpad files; an untracked summary under `docs/android-audit/reports/verify/`; `evidence/F-xx/` only with `--finding` |
+| `/android-pr` | The PR gate. `prepare` (read-only) classifies files (PR, never-stage, needs-approval, unrelated, secret risk), checks local verification and audit evidence for staleness, and drafts a title, commit message and body that separate *Verified* from *Not verified*, keeping local and GitHub CI results apart. `branch`, `commit`, `push`, `open` and `update` each run only after their own explicit approval; `commit` stages an exact file list and checks the staging area before committing. `status` reads GitHub checks. It never merges: the owner merges on GitHub. | Scratchpad drafts; Git and GitHub only after approval |
 
-Not proposed, because they already exist: R8 analysis (`r8-analyzer`), Compose performance (`jetpack-compose-performance`) and test setup (`testing-setup`). `android-pr` calls these directly.
+Shared by all three: `.claude/tools/git_read.py`, a read-only git wrapper that the skills pre-approve instead of free-argument rules like `git diff *` (which would also allow `--output` writes or `branch -D`), and `.claude/tools/safe_paths.py`, which limits script output to new files in temporary directories or named evidence folders.
+
+Reused instead of duplicated: R8 analysis (`r8-analyzer`), Compose performance (`jetpack-compose-performance`) and test setup (`testing-setup`).
 
 ## 4. Shared finding format
 
@@ -50,17 +52,21 @@ Impact · Fix · Regression test (name + level) · Effort S/M/L · Verification 
 ## 5. Workflow loop
 
 ```
-review ──► triage ──► implement ──► verify ──► document
-  │          │           │             │           │
-android-   human picks  android-pr:   android-    finding status →
-audit      1 finding    test first,   verify      Fixed (PR #),
-(read-     (approval    then fix      (Gradle +   evidence folder,
-only)      gate)                      CLI)        ADR if needed
+review ──► triage ──► implement ──► verify ──────► PR ──────────► merge
+  │          │           │             │              │               │
+android-   human picks  test first,   android-       android-pr:     human, on
+audit      1 finding    then fix      verify         prepare, then   GitHub
+(read-     (approval    (manual,      (local,        approved        (never
+only)      gate)        approved)     fingerprinted) commit, push,   automated)
+                                                     open
 ```
+
+After the PR is open, `/android-pr status <n>` records GitHub CI on the PR's head SHA. A post-merge `/android-audit range` feeds new findings back into the register.
 
 Guardrails:
 - Reviewers are read-only.
 - Production edits only happen after the human approves a specific finding ID.
+- Branch creation, commit, push and PR creation each need their own explicit approval. Nothing is merged automatically.
 - Each PR fixes one finding, or one tightly related pair.
 - Each PR includes a failing-then-passing test.
 - No production Firebase writes, deploys or emulator data wipes without explicit approval.
