@@ -1,0 +1,10 @@
+> Task :app:compileDebugKotlin
+> Task :app:assembleDebug
+> Task :app:testDebugUnitTest
+> Task :app:lintAnalyzeDebugUnitTest
+> Task :app:lintAnalyzeDebugAndroidTest
+> Task :app:lintAnalyzeDebug
+> Task :app:lintReportDebug
+> Task :app:lintDebug
+BUILD SUCCESSFUL in 1m 12s
+55 actionable tasks: 55 executed

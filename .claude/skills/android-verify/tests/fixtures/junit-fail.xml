@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nextdaymobilestudio.lebenindeutschland.feature.mockexam.MockExamViewModelTest" tests="2" skipped="0" failures="1" errors="0" timestamp="2026-11-05T19:40:12.000Z" hostname="localhost" time="0.210">
+  <properties/>
+  <testcase name="answerTappedAtDeadlineWithPendingSave_isCountedInResult" classname="com.nextdaymobilestudio.lebenindeutschland.feature.mockexam.MockExamViewModelTest" time="0.120">
+    <failure message="java.lang.AssertionError: expected:&lt;1&gt; but was:&lt;0&gt;" type="java.lang.AssertionError">java.lang.AssertionError: expected:&lt;1&gt; but was:&lt;0&gt;
+	at org.junit.Assert.fail(Assert.java:89)
+	at com.nextdaymobilestudio.lebenindeutschland.feature.mockexam.MockExamViewModelTest$answerTappedAtDeadlineWithPendingSave_isCountedInResult$1.invokeSuspend(MockExamViewModelTest.kt:147)
+</failure>
+  </testcase>
+  <testcase name="restoreAfterDeadlineSubmitsByTimeout" classname="com.nextdaymobilestudio.lebenindeutschland.feature.mockexam.MockExamViewModelTest" time="0.090"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

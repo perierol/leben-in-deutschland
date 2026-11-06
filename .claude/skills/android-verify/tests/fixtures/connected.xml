@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="2" failures="0" errors="0" skipped="0" time="0.000" timestamp="2026-10-27T15:11:46" hostname="localhost">
+  <testsuite name="com.nextdaymobilestudio.lebenindeutschland.ExampleInstrumentedTest" tests="1" failures="0" errors="0" skipped="0" time="0.001" timestamp="2026-10-27T15:11:46" hostname="localhost">
+    <properties>
+      <property name="device" value="emulator-5554" />
+    </properties>
+    <testcase name="useAppContext" classname="com.nextdaymobilestudio.lebenindeutschland.ExampleInstrumentedTest" time="0.001" />
+  </testsuite>
+  <testsuite name="com.nextdaymobilestudio.lebenindeutschland.core.content.ProductionContentIntegrityTest" tests="1" failures="0" errors="0" skipped="0" time="0.330" timestamp="2026-10-27T15:11:46" hostname="localhost">
+    <properties>
+      <property name="device" value="emulator-5554" />
+    </properties>
+    <testcase name="installedProductionCatalogContainsAll460UsableQuestions" classname="com.nextdaymobilestudio.lebenindeutschland.core.content.ProductionContentIntegrityTest" time="0.330" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 9.4.1">
+
+    <issue
+        id="EmptySuperCall"
+        severity="Warning"
+        message="No need to call `super.onCleared`; the super method is defined to be empty"
+        category="Correctness"
+        priority="9"
+        summary="Calling an empty super method"
+        explanation="For methods annotated with `@EmptySuper`, overriding methods should not also call the super implementation, either because it is empty, or perhaps it contains code not intended to be run when the method is overridden."
+        errorLine1="        super.onCleared()"
+        errorLine2="              ~~~~~~~~~">
+        <location
+            file="{REPO}/android/app/src/main/java/com/nextdaymobilestudio/lebenindeutschland/feature/mockexam/MockExamViewModel.kt"
+            line="247"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        severity="Warning"
+        message="Formatting %d followed by words (&quot;questions&quot;): This should probably be a plural rather than a string"
+        category="Correctness:Messages"
+        priority="5"
+        summary="Potential Plurals"
+        explanation="This lint check looks for potential errors in internationalization where you have translated a message which involves a quantity and it looks like other parts of the string may need grammatical changes.&#xA;&#xA;For example, rather than something like this:&#xA;```xml&#xA;  &lt;string name=&quot;try_again&quot;>Try again in %d seconds.&lt;/string>&#xA;```&#xA;you should be using a plural:&#xA;```xml&#xA;   &lt;plurals name=&quot;try_again&quot;>&#xA;        &lt;item quantity=&quot;one&quot;>Try again in %d second&lt;/item>&#xA;        &lt;item quantity=&quot;other&quot;>Try again in %d seconds&lt;/item>&#xA;    &lt;/plurals>&#xA;```&#xA;This will ensure that in other languages the right set of translations are provided for the different quantity classes.&#xA;&#xA;(This check depends on some heuristics, so it may not accurately determine whether a string really should be a quantity. You can use tools:ignore to filter out false positives."
+        url="https://developer.android.com/guide/topics/resources/string-resource.html#Plurals"
+        urls="https://developer.android.com/guide/topics/resources/string-resource.html#Plurals"
+        errorLine1="    &lt;string name=&quot;content_bootstrap_ready_description&quot;>%1$d questions are available offline.&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="{REPO}/android/app/src/main/res/values-en/strings.xml"
+            line="20"
+            column="5"/>
+    </issue>
+
+</issues>

@@ -1,0 +1,14 @@
+# run_gradle step tests: android/gradlew -p android assembleDebug :app:testDebugUnitTest --rerun --stacktrace
+> Task :app:compileDebugKotlin UP-TO-DATE
+> Task :app:assembleDebug UP-TO-DATE
+> Task :app:compileDebugUnitTestKotlin UP-TO-DATE
+> Task :app:testDebugUnitTest
+BUILD SUCCESSFUL in 9s
+# run_gradle step lint: android/gradlew -p android lintDebug :app:lintAnalyzeDebug --rerun :app:lintAnalyzeDebugUnitTest --rerun :app:lintAnalyzeDebugAndroidTest --rerun :app:lintReportDebug --rerun --stacktrace
+> Task :app:compileDebugKotlin UP-TO-DATE
+> Task :app:lintAnalyzeDebugUnitTest
+> Task :app:lintAnalyzeDebugAndroidTest
+> Task :app:lintAnalyzeDebug UP-TO-DATE
+> Task :app:lintReportDebug
+> Task :app:lintDebug
+BUILD SUCCESSFUL in 41s

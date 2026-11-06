@@ -1,0 +1,3 @@
+> Task :app:compileDebugUnitTestKotlin
+> Task :app:testDebugUnitTest FAILED
+BUILD FAILED in 21s
