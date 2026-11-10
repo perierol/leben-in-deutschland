@@ -24,6 +24,7 @@ import com.nextdaymobilestudio.lebenindeutschland.app.navigation.HomeKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.LanguageSelectionKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.MockExamKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.SettingsKey
+import com.nextdaymobilestudio.lebenindeutschland.app.navigation.SettingsLanguageDownloadKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.SettingsLanguageKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.SettingsStateKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.StateSelectionKey
@@ -125,6 +126,13 @@ private fun OnboardingNavigation(
             }
         }
     }
+    val settingsLanguageChange = SettingsLanguageChange(
+        backStack = backStack,
+        onboardingPreferencesRepository = repository,
+        mockExamPreferencesRepository = mockExamPreferencesRepository,
+        onApplicationLanguageSelected = onApplicationLanguageSelected,
+        navigateBack = navigateBack,
+    )
 
     Box(modifier = Modifier.fillMaxSize()) {
         NavDisplay(
@@ -280,15 +288,18 @@ private fun OnboardingNavigation(
                         onBack = navigateBack,
                         onContinue = { language ->
                             coroutineScope.launch {
-                                if (language.code == persistedLanguage?.code) {
-                                    navigateBack()
-                                } else {
-                                    mockExamPreferencesRepository.clearExam()
-                                    repository.setLanguageCode(language.code)
-                                    backStack.clear()
-                                    backStack.add(ContentBootstrapKey)
-                                    onApplicationLanguageSelected(language)
-                                }
+                                settingsLanguageChange.request(language, persistedLanguage)
+                            }
+                        },
+                    )
+                }
+                entry<SettingsLanguageDownloadKey> { key ->
+                    ContentBootstrapRoute(
+                        selectedLanguageCode = key.languageCode,
+                        coordinator = contentBootstrapCoordinator,
+                        onContentReady = { questionCount ->
+                            coroutineScope.launch {
+                                settingsLanguageChange.complete(key, questionCount)
                             }
                         },
                     )

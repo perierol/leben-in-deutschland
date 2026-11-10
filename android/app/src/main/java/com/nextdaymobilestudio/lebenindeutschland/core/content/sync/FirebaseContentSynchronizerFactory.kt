@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.nextdaymobilestudio.lebenindeutschland.core.content.images.ContentImageStore
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.FirebaseAnonymousAuthenticator
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.FirestoreContentDataSource
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
@@ -26,6 +27,7 @@ object FirebaseContentSynchronizerFactory {
             contentAuthenticator = FirebaseAnonymousAuthenticator(
                 firebaseAuth = FirebaseAuth.getInstance(firebaseApp),
             ),
+            contentImageInstaller = ContentImageStore(ContentImageStore.directory(context)),
         )
     }
 

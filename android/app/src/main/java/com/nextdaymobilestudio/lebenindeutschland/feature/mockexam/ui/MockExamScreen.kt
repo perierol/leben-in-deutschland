@@ -42,10 +42,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -57,6 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.nextdaymobilestudio.lebenindeutschland.R
+import com.nextdaymobilestudio.lebenindeutschland.core.content.images.displayModel
 import com.nextdaymobilestudio.lebenindeutschland.core.database.model.ContentImage
 import com.nextdaymobilestudio.lebenindeutschland.core.database.model.StudyAnswer
 import com.nextdaymobilestudio.lebenindeutschland.core.database.model.StudyQuestion
@@ -489,8 +492,9 @@ private fun ExamImage(
     image: ContentImage,
     contentDescription: String,
 ) {
+    val context = LocalContext.current
     AsyncImage(
-        model = image.sourceUrl.ifBlank { image.sourcePath },
+        model = remember(image) { image.displayModel(context) },
         contentDescription = contentDescription,
         modifier = Modifier
             .fillMaxWidth()

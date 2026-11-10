@@ -44,3 +44,8 @@ data object SettingsLanguageKey : AppNavigationKey
 
 @Serializable
 data object SettingsStateKey : AppNavigationKey
+
+@Serializable
+data class SettingsLanguageDownloadKey(
+    val languageCode: String,
+) : AppNavigationKey
