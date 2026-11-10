@@ -1,10 +1,12 @@
 package com.nextdaymobilestudio.lebenindeutschland.core.content.sync
 
+import com.nextdaymobilestudio.lebenindeutschland.core.content.images.ContentImageInstaller
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.ContentAuthenticator
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.RemoteContentDataSource
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.RemoteContentDocument
 import com.nextdaymobilestudio.lebenindeutschland.core.database.entity.ContentPackageEntity
 import com.nextdaymobilestudio.lebenindeutschland.core.database.entity.ContentReleaseEntity
+import com.nextdaymobilestudio.lebenindeutschland.core.database.model.ContentImage
 import com.nextdaymobilestudio.lebenindeutschland.core.database.model.ContentPackageSnapshot
 import com.nextdaymobilestudio.lebenindeutschland.core.database.model.StudyQuestion
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -98,6 +101,46 @@ class ContentSyncCoordinatorTest {
             ),
             remote.calls,
         )
+    }
+
+    @Test
+    fun releaseImagesAreInstalledBeforeAnyLocalWrite() = runBlocking {
+        val local = RecordingLocalContentRepository()
+        val installedHashes = mutableSetOf<String>()
+        var writesWhenInstalling: Int? = null
+        val installer = ContentImageInstaller { images ->
+            installedHashes += images.map(ContentImage::sha256)
+            writesWhenInstalling = local.snapshots.size
+        }
+
+        ContentSyncCoordinator(
+            FakeRemoteContentDataSource(remoteContentFixture()),
+            local,
+            contentImageInstaller = installer,
+        ) { 123L }.synchronize("en")
+
+        assertEquals(setOf("image-hash", "answer-image-hash"), installedHashes)
+        assertEquals(0, writesWhenInstalling)
+        assertEquals(RELEASE_ID to "en", local.activation)
+    }
+
+    @Test
+    fun failedImageInstallLeavesTheReleaseUninstalled() {
+        val local = RecordingLocalContentRepository()
+        val installer = ContentImageInstaller { throw ContentSyncException("offline") }
+
+        assertThrows(ContentSyncException::class.java) {
+            runBlocking {
+                ContentSyncCoordinator(
+                    FakeRemoteContentDataSource(remoteContentFixture()),
+                    local,
+                    contentImageInstaller = installer,
+                ) { 123L }.synchronize("en")
+            }
+        }
+
+        assertEquals(emptyList<ContentPackageSnapshot>(), local.snapshots)
+        assertNull(local.activation)
     }
 
     @Test

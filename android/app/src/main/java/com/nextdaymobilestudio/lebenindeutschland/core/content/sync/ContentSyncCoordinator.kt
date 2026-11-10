@@ -1,7 +1,10 @@
 package com.nextdaymobilestudio.lebenindeutschland.core.content.sync
 
+import com.nextdaymobilestudio.lebenindeutschland.core.content.images.ContentImageInstaller
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.ContentAuthenticator
 import com.nextdaymobilestudio.lebenindeutschland.core.content.remote.RemoteContentDataSource
+import com.nextdaymobilestudio.lebenindeutschland.core.database.model.ContentPackageSnapshot
+import com.nextdaymobilestudio.lebenindeutschland.core.database.model.contentImages
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
 import java.util.concurrent.CancellationException
 
@@ -27,6 +30,7 @@ class ContentSyncCoordinator(
     private val remoteContentDataSource: RemoteContentDataSource,
     private val localContentRepository: LocalContentRepository,
     private val contentAuthenticator: ContentAuthenticator = ContentAuthenticator.None,
+    private val contentImageInstaller: ContentImageInstaller = ContentImageInstaller.None,
     private val clock: () -> Long = System::currentTimeMillis,
 ) : ContentSynchronizer {
     private val mapper = ContentPackageMapper()
@@ -104,6 +108,11 @@ class ContentSyncCoordinator(
                 installedAtEpochMillis = installedAtEpochMillis,
             )
         }
+
+        // A release is complete only with its images (ADR 0002). Store and verify them
+        // before the first local write, so a failed download also leaves current content
+        // untouched instead of activating a release whose images need the network.
+        contentImageInstaller.install(snapshots.flatMap(ContentPackageSnapshot::contentImages))
 
         snapshots.forEach { snapshot ->
             localContentRepository.replacePackage(snapshot)

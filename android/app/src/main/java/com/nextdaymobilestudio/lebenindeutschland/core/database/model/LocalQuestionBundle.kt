@@ -94,6 +94,11 @@ fun LocalQuestionBundle.toStudyQuestion(): StudyQuestion {
     )
 }
 
+/** Every question and answer image this package references. */
+fun ContentPackageSnapshot.contentImages(): List<ContentImage> =
+    questions.mapNotNull { question -> question.toContentImage() } +
+        answers.mapNotNull { answer -> answer.toContentImage() }
+
 private fun QuestionEntity.toStudyMemoryKey(): StudyMemoryKey? {
     val values = listOf(memoryQuestionCue, memoryAnswerCue, memoryKeyStatus)
     if (values.all { it == null }) return null
