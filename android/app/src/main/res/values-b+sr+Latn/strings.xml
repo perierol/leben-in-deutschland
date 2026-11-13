@@ -98,6 +98,7 @@
     <string name="settings_title">Podešavanja</string>
     <string name="settings_description">Promenite jezik ili saveznu pokrajinu.</string>
     <string name="settings_progress_note">Napredak u učenju čuva se odvojeno za svaki izbor jezika i pokrajine. Promena izbora briše sačuvani probni ispit.</string>
+    <string name="settings_privacy_options">Opcije privatnosti</string>
     <string name="home_exam_history">Istorija ispita</string>
     <string name="exam_history_title">Istorija ispita</string>
     <string name="exam_history_empty_title">Još nema ispita</string>

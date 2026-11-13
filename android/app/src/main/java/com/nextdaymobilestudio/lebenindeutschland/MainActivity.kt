@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
                     contentSynchronizerProvider =
                         appContainer.contentSynchronizerProvider,
                     contentRefresher = appContainer.contentRefresher,
+                    adsController = appContainer.adsController,
+                    questionBannerAdFactory = appContainer.questionBannerAdFactory,
                     onApplicationLanguageSelected = ::applyApplicationLanguage,
                 )
             }

@@ -98,6 +98,7 @@
     <string name="settings_title">Ayarlar</string>
     <string name="settings_description">Dilinizi veya eyaletinizi değiştirin.</string>
     <string name="settings_progress_note">Çalışma ilerlemeniz her dil ve eyalet seçimi için ayrı saklanır. Bir seçimi değiştirmek kayıtlı deneme sınavını siler.</string>
+    <string name="settings_privacy_options">Gizlilik seçenekleri</string>
     <string name="home_exam_history">Sınav geçmişi</string>
     <string name="exam_history_title">Sınav geçmişi</string>
     <string name="exam_history_empty_title">Henüz sınav yok</string>

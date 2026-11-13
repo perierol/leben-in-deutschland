@@ -98,6 +98,7 @@
     <string name="settings_title">Ajustes</string>
     <string name="settings_description">Cambia tu idioma o estado federado.</string>
     <string name="settings_progress_note">Tu progreso se guarda por separado para cada idioma y estado. Cambiar una selección elimina el examen de prueba guardado.</string>
+    <string name="settings_privacy_options">Opciones de privacidad</string>
     <string name="home_exam_history">Historial de exámenes</string>
     <string name="exam_history_title">Historial de exámenes</string>
     <string name="exam_history_empty_title">Aún no hay exámenes</string>

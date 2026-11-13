@@ -100,6 +100,7 @@
     <string name="settings_title">Einstellungen</string>
     <string name="settings_description">Ändern Sie Ihre Sprache oder Ihr Bundesland.</string>
     <string name="settings_progress_note">Ihr Lernfortschritt wird für jede Sprach- und Bundeslandauswahl getrennt gespeichert. Bei einer Änderung wird die gespeicherte Probeprüfung gelöscht.</string>
+    <string name="settings_privacy_options">Datenschutzoptionen</string>
     <string name="home_exam_history">Prüfungsverlauf</string>
     <string name="exam_history_title">Prüfungsverlauf</string>
     <string name="exam_history_empty_title">Noch keine Prüfungen</string>

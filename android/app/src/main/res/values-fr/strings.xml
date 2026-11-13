@@ -98,6 +98,7 @@
     <string name="settings_title">Paramètres</string>
     <string name="settings_description">Modifiez votre langue ou votre Land.</string>
     <string name="settings_progress_note">Votre progression est enregistrée séparément pour chaque langue et Land. Modifier une sélection supprime l’examen blanc enregistré.</string>
+    <string name="settings_privacy_options">Options de confidentialité</string>
     <string name="home_exam_history">Historique des examens</string>
     <string name="exam_history_title">Historique des examens</string>
     <string name="exam_history_empty_title">Aucun examen pour le moment</string>

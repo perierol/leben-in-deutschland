@@ -6,4 +6,5 @@ object SettingsTestTags {
     const val LANGUAGE = "settings-language"
     const val STATE = "settings-state"
     const val PROGRESS_NOTE = "settings-progress-note"
+    const val PRIVACY_OPTIONS = "settings-privacy-options"
 }
