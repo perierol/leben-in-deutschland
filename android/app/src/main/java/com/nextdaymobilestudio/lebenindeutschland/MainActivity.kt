@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
                         appContainer.mockExamPreferencesRepository,
                     contentSynchronizerProvider =
                         appContainer.contentSynchronizerProvider,
+                    contentRefresher = appContainer.contentRefresher,
                     onApplicationLanguageSelected = ::applyApplicationLanguage,
                 )
             }

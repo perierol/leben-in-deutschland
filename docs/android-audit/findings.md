@@ -26,6 +26,14 @@ No Critical findings were identified. Nothing below was fixed during the audit.
 Ranked by production risk, then how well each fits a focused PR.
 
 ### F-01 · Returning users are blocked on the bootstrap screen until the network refresh ends
+- **Update (2026-11-13, branch `fix/android-offline-first-entry`): resolved, pending merge.**
+  - With usable installed content, `ContentBootstrapCoordinator.kt:26` starts a background refresh and emits `Ready(isRefreshing = false)` at once. The learner reaches Home without waiting for the server.
+  - The refresh runs in an application-scoped `BackgroundContentRefresher` (`core/content/sync/ContentRefresher.kt:40`, created at `LebenInDeutschlandApplication.kt:51`) and is bounded by `withTimeout` (`ContentRefresher.kt:61`, 120 s by default). A timeout or failure is logged and never reaches the UI.
+  - Each bootstrap first stops an earlier refresh (`ContentBootstrapCoordinator.kt:20`), so a refresh for another language can't activate a release after the check. `ContentImageStore.kt:40` checks for cancellation between images.
+  - The first-install path is unchanged: `Loading`, then the foreground sync, then `Ready` or `Error`.
+  - Regression test: `ContentBootstrapViewModelTest.installedContentLetsLearnerEnterWhileServerRefreshNeverCompletes`, with a synchronizer that never completes.
+  - Not done: the manual check with networking disabled. WorkManager was not added.
+  - The evidence below describes the code at `e43187f`.
 - **Category:** Architecture / Offline-first · **Type:** Defect · **Severity:** High · **Confidence:** Confirmed (verified) · **Effort:** S–M · **Source:** ARCH-1, UI-6
 - **Evidence:**
   - `feature/contentbootstrap/ui/ContentBootstrapRoute.kt:27-31` only navigates when `!readyState.isRefreshing`.

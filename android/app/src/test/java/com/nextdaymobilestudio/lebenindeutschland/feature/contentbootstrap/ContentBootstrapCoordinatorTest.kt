@@ -1,5 +1,6 @@
 package com.nextdaymobilestudio.lebenindeutschland.feature.contentbootstrap
 
+import com.nextdaymobilestudio.lebenindeutschland.core.content.sync.ContentRefresher
 import com.nextdaymobilestudio.lebenindeutschland.core.content.sync.ContentSyncResult
 import com.nextdaymobilestudio.lebenindeutschland.core.content.sync.ContentSynchronizer
 import com.nextdaymobilestudio.lebenindeutschland.core.database.entity.ContentPackageEntity
@@ -42,15 +43,17 @@ class ContentBootstrapCoordinatorTest {
     }
 
     @Test
-    fun usableLocalContentIsAvailableWhileRemoteRefreshRuns() = runBlocking {
+    fun usableLocalContentIsReadyAtOnceAndRefreshesInBackground() = runBlocking {
         val local = FakeLocalContentRepository().apply {
             seedUsableContent("en")
         }
+        val refresher = RecordingContentRefresher()
         val coordinator = ContentBootstrapCoordinator(
             localContentRepository = local,
             contentSynchronizerProvider = {
-                ContentSynchronizer { error("offline") }
+                error("Installed content must not wait for a foreground sync")
             },
+            contentRefresher = refresher,
         )
 
         val states = coordinator.bootstrap("en").toList()
@@ -60,17 +63,29 @@ class ContentBootstrapCoordinatorTest {
                 ContentBootstrapUiState.Ready(
                     releaseId = RELEASE_ID,
                     questionCount = 460,
-                    isRefreshing = true,
-                ),
-                ContentBootstrapUiState.Ready(
-                    releaseId = RELEASE_ID,
-                    questionCount = 460,
                     isRefreshing = false,
-                    refreshFailed = true,
                 ),
             ),
             states,
         )
+        assertEquals(listOf("cancelAndJoin", "start:en"), refresher.calls)
+    }
+
+    @Test
+    fun firstInstallStopsEarlierRefreshAndStartsNone() = runBlocking {
+        val local = FakeLocalContentRepository()
+        val refresher = RecordingContentRefresher()
+        val coordinator = ContentBootstrapCoordinator(
+            localContentRepository = local,
+            contentSynchronizerProvider = { successfulSynchronizer(local) },
+            contentRefresher = refresher,
+        )
+
+        coordinator.bootstrap("tr").toList()
+
+        // A refresh for the previous language must not activate a release lacking "tr"
+        // after the check, and the foreground download already contacted the server.
+        assertEquals(listOf("cancelAndJoin"), refresher.calls)
     }
 
     @Test
@@ -158,7 +173,19 @@ private fun successfulSynchronizer(
     )
 }
 
-private class FakeLocalContentRepository : LocalContentRepository {
+private class RecordingContentRefresher : ContentRefresher {
+    val calls = mutableListOf<String>()
+
+    override suspend fun start(languageCode: String) {
+        calls += "start:$languageCode"
+    }
+
+    override suspend fun cancelAndJoin() {
+        calls += "cancelAndJoin"
+    }
+}
+
+internal class FakeLocalContentRepository : LocalContentRepository {
     private val activeRelease = MutableStateFlow<ContentReleaseEntity?>(null)
     private val packages = mutableMapOf<Pair<String, String>, ContentPackageEntity>()
 

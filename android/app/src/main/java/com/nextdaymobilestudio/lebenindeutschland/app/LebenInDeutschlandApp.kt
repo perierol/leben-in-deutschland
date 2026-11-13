@@ -29,6 +29,7 @@ import com.nextdaymobilestudio.lebenindeutschland.app.navigation.SettingsLanguag
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.SettingsStateKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.StateSelectionKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.StudySessionKey
+import com.nextdaymobilestudio.lebenindeutschland.core.content.sync.ContentRefresher
 import com.nextdaymobilestudio.lebenindeutschland.core.content.sync.ContentSynchronizer
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
 import com.nextdaymobilestudio.lebenindeutschland.core.preferences.OnboardingPreferences
@@ -59,6 +60,7 @@ fun LebenInDeutschlandApp(
     contentSynchronizerProvider: () -> ContentSynchronizer,
     onApplicationLanguageSelected: (SupportedLanguage) -> Unit,
     modifier: Modifier = Modifier,
+    contentRefresher: ContentRefresher = ContentRefresher.None,
 ) {
     val nullablePreferences = remember(onboardingPreferencesRepository) {
         onboardingPreferencesRepository.preferences.asNullable()
@@ -79,6 +81,7 @@ fun LebenInDeutschlandApp(
                 localContentRepository = localContentRepository,
                 mockExamPreferencesRepository = mockExamPreferencesRepository,
                 contentSynchronizerProvider = contentSynchronizerProvider,
+                contentRefresher = contentRefresher,
                 onApplicationLanguageSelected = onApplicationLanguageSelected,
             )
         }
@@ -92,6 +95,7 @@ private fun OnboardingNavigation(
     localContentRepository: LocalContentRepository,
     mockExamPreferencesRepository: MockExamPreferencesRepository,
     contentSynchronizerProvider: () -> ContentSynchronizer,
+    contentRefresher: ContentRefresher,
     onApplicationLanguageSelected: (SupportedLanguage) -> Unit,
 ) {
     val persistedLanguage = SupportedLanguage.fromCode(preferences.languageCode)
@@ -108,10 +112,12 @@ private fun OnboardingNavigation(
     val contentBootstrapCoordinator = remember(
         localContentRepository,
         contentSynchronizerProvider,
+        contentRefresher,
     ) {
         ContentBootstrapCoordinator(
             localContentRepository = localContentRepository,
             contentSynchronizerProvider = contentSynchronizerProvider,
+            contentRefresher = contentRefresher,
             reportError = { message, throwable ->
                 Log.e(CONTENT_BOOTSTRAP_LOG_TAG, message, throwable)
             },
