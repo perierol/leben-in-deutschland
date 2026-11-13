@@ -98,6 +98,7 @@
     <string name="settings_title">Настройки</string>
     <string name="settings_description">Променете езика или федералната провинция.</string>
     <string name="settings_progress_note">Напредъкът се пази отделно за всеки избор на език и провинция. Промяната изтрива запазения пробен изпит.</string>
+    <string name="settings_privacy_options">Настройки за поверителност</string>
     <string name="home_exam_history">История на изпитите</string>
     <string name="exam_history_title">История на изпитите</string>
     <string name="exam_history_empty_title">Все още няма изпити</string>

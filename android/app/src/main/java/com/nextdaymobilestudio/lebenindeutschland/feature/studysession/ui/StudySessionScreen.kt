@@ -90,13 +90,27 @@ fun StudySessionScreen(
     onRetry: () -> Unit,
     onFinished: () -> Unit,
     modifier: Modifier = Modifier,
+    adBanner: (@Composable () -> Unit)? = null,
 ) {
     Scaffold(
         modifier = modifier
             .fillMaxSize()
             .testTag(StudySessionTestTags.SCREEN),
         containerColor = MaterialTheme.colorScheme.background,
-        topBar = { StudyTopBar(mode = mode, onBack = onBack) },
+        topBar = {
+            Column {
+                StudyTopBar(mode = mode, onBack = onBack)
+                // Under the top bar, away from the answers and the action button. It stays
+                // through the loading step between questions, so the layout does not jump,
+                // and is absent on the completion, empty and error screens.
+                if (
+                    adBanner != null &&
+                    (uiState is StudySessionUiState.Ready || uiState is StudySessionUiState.Loading)
+                ) {
+                    adBanner()
+                }
+            }
+        },
         bottomBar = {
             if (uiState is StudySessionUiState.Ready) {
                 StudyActionSection(

@@ -1,10 +1,12 @@
 package com.nextdaymobilestudio.lebenindeutschland.app
 
 import android.util.Log
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,6 +31,9 @@ import com.nextdaymobilestudio.lebenindeutschland.app.navigation.SettingsLanguag
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.SettingsStateKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.StateSelectionKey
 import com.nextdaymobilestudio.lebenindeutschland.app.navigation.StudySessionKey
+import com.nextdaymobilestudio.lebenindeutschland.core.ads.AdsController
+import com.nextdaymobilestudio.lebenindeutschland.core.ads.BannerAdFactory
+import com.nextdaymobilestudio.lebenindeutschland.core.ads.UmpConsentGateway
 import com.nextdaymobilestudio.lebenindeutschland.core.content.sync.ContentRefresher
 import com.nextdaymobilestudio.lebenindeutschland.core.content.sync.ContentSynchronizer
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
@@ -61,6 +66,8 @@ fun LebenInDeutschlandApp(
     onApplicationLanguageSelected: (SupportedLanguage) -> Unit,
     modifier: Modifier = Modifier,
     contentRefresher: ContentRefresher = ContentRefresher.None,
+    adsController: AdsController = AdsController.Disabled,
+    questionBannerAdFactory: BannerAdFactory? = null,
 ) {
     val nullablePreferences = remember(onboardingPreferencesRepository) {
         onboardingPreferencesRepository.preferences.asNullable()
@@ -82,6 +89,8 @@ fun LebenInDeutschlandApp(
                 mockExamPreferencesRepository = mockExamPreferencesRepository,
                 contentSynchronizerProvider = contentSynchronizerProvider,
                 contentRefresher = contentRefresher,
+                adsController = adsController,
+                questionBannerAdFactory = questionBannerAdFactory,
                 onApplicationLanguageSelected = onApplicationLanguageSelected,
             )
         }
@@ -96,8 +105,11 @@ private fun OnboardingNavigation(
     mockExamPreferencesRepository: MockExamPreferencesRepository,
     contentSynchronizerProvider: () -> ContentSynchronizer,
     contentRefresher: ContentRefresher,
+    adsController: AdsController,
+    questionBannerAdFactory: BannerAdFactory?,
     onApplicationLanguageSelected: (SupportedLanguage) -> Unit,
 ) {
+    val activity = LocalActivity.current
     val persistedLanguage = SupportedLanguage.fromCode(preferences.languageCode)
     val persistedState = GermanState.fromCode(preferences.stateCode)
     val initialDestination: AppNavigationKey = remember {
@@ -189,6 +201,14 @@ private fun OnboardingNavigation(
                     )
                 }
                 entry<HomeKey> {
+                    // Home is ad-free. It is the first screen after onboarding and the
+                    // content download, so Google's consent form, when required, appears
+                    // here rather than over onboarding or a question.
+                    LaunchedEffect(adsController, activity) {
+                        if (activity != null) {
+                            adsController.gatherConsent(UmpConsentGateway(activity))
+                        }
+                    }
                     HomeRoute(
                         languageName = persistedLanguage?.nativeName.orEmpty(),
                         stateName = persistedState?.germanName.orEmpty(),
@@ -239,6 +259,8 @@ private fun OnboardingNavigation(
                         },
                         onBack = navigateBack,
                         onFinished = navigateBack,
+                        adsController = adsController,
+                        questionBannerAdFactory = questionBannerAdFactory,
                     )
                 }
                 entry<MockExamKey> {
@@ -272,6 +294,8 @@ private fun OnboardingNavigation(
                     )
                 }
                 entry<SettingsKey> {
+                    val isPrivacyOptionsRequired by
+                        adsController.isPrivacyOptionsRequired.collectAsStateWithLifecycle()
                     SettingsRoute(
                         languageName = persistedLanguage?.nativeName.orEmpty(),
                         stateName = persistedState?.germanName.orEmpty(),
@@ -284,6 +308,14 @@ private fun OnboardingNavigation(
                         onChangeState = {
                             if (backStack.lastOrNull() != SettingsStateKey) {
                                 backStack.add(SettingsStateKey)
+                            }
+                        },
+                        showPrivacyOptions = isPrivacyOptionsRequired,
+                        onOpenPrivacyOptions = {
+                            if (activity != null) {
+                                coroutineScope.launch {
+                                    adsController.showPrivacyOptions(UmpConsentGateway(activity))
+                                }
                             }
                         },
                     )

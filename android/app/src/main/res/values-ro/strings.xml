@@ -98,6 +98,7 @@
     <string name="settings_title">Setări</string>
     <string name="settings_description">Schimbă limba sau landul federal.</string>
     <string name="settings_progress_note">Progresul este salvat separat pentru fiecare limbă și land. Schimbarea unei selecții șterge examenul de probă salvat.</string>
+    <string name="settings_privacy_options">Opțiuni de confidențialitate</string>
     <string name="home_exam_history">Istoricul examenelor</string>
     <string name="exam_history_title">Istoricul examenelor</string>
     <string name="exam_history_empty_title">Încă nu există examene</string>

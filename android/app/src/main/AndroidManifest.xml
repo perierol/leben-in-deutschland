@@ -16,6 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LebenInDeutschland">
 
+        <!-- Set per build type in app/build.gradle.kts: Google's test ID in debug,
+             the real ID from a Gradle property in release. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobAppId}" />
+
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"

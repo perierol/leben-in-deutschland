@@ -98,6 +98,7 @@
     <string name="settings_title">Cilësimet</string>
     <string name="settings_description">Ndryshoni gjuhën ose landin federal.</string>
     <string name="settings_progress_note">Përparimi ruhet veçmas për çdo gjuhë dhe land. Ndryshimi i një zgjedhjeje fshin provimin provë të ruajtur.</string>
+    <string name="settings_privacy_options">Opsionet e privatësisë</string>
     <string name="home_exam_history">Historiku i provimeve</string>
     <string name="exam_history_title">Historiku i provimeve</string>
     <string name="exam_history_empty_title">Ende nuk ka provime</string>
