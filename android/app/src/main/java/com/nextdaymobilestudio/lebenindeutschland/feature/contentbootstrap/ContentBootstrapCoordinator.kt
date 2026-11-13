@@ -1,5 +1,6 @@
 package com.nextdaymobilestudio.lebenindeutschland.feature.contentbootstrap
 
+import com.nextdaymobilestudio.lebenindeutschland.core.content.sync.ContentRefresher
 import com.nextdaymobilestudio.lebenindeutschland.core.content.sync.ContentSynchronizer
 import com.nextdaymobilestudio.lebenindeutschland.core.database.entity.ContentReleaseEntity
 import com.nextdaymobilestudio.lebenindeutschland.core.database.repository.LocalContentRepository
@@ -10,16 +11,24 @@ import kotlinx.coroutines.flow.flow
 class ContentBootstrapCoordinator(
     private val localContentRepository: LocalContentRepository,
     private val contentSynchronizerProvider: () -> ContentSynchronizer,
+    private val contentRefresher: ContentRefresher = ContentRefresher.None,
     private val reportError: (String, Throwable) -> Unit = { _, _ -> },
 ) {
     fun bootstrap(selectedLanguageCode: String): Flow<ContentBootstrapUiState> = flow {
+        // A refresh started for an earlier language could still activate a release
+        // without the language checked below. Let it stop before checking.
+        contentRefresher.cancelAndJoin()
+
         val localRelease = findUsableLocalRelease(selectedLanguageCode)
-        if (localRelease == null) {
-            emit(ContentBootstrapUiState.Loading)
-        } else {
-            emit(localRelease.toReadyState(isRefreshing = true))
+        if (localRelease != null) {
+            // Installed content is usable now (ADR 0006). The server check continues in
+            // the background, so a slow or unreachable server cannot hold up the learner.
+            contentRefresher.start(selectedLanguageCode)
+            emit(localRelease.toReadyState())
+            return@flow
         }
 
+        emit(ContentBootstrapUiState.Loading)
         try {
             val result = contentSynchronizerProvider().synchronize(selectedLanguageCode)
             emit(
@@ -36,16 +45,7 @@ class ContentBootstrapCoordinator(
                 "Content bootstrap failed for language $selectedLanguageCode",
                 exception,
             )
-            if (localRelease == null) {
-                emit(ContentBootstrapUiState.Error)
-            } else {
-                emit(
-                    localRelease.toReadyState(
-                        isRefreshing = false,
-                        refreshFailed = true,
-                    ),
-                )
-            }
+            emit(ContentBootstrapUiState.Error)
         }
     }
 
@@ -60,15 +60,12 @@ class ContentBootstrapCoordinator(
         return release.takeIf { hasEveryRequiredPackage }
     }
 
-    private fun ContentReleaseEntity.toReadyState(
-        isRefreshing: Boolean,
-        refreshFailed: Boolean = false,
-    ): ContentBootstrapUiState.Ready = ContentBootstrapUiState.Ready(
-        releaseId = releaseId,
-        questionCount = questionCount,
-        isRefreshing = isRefreshing,
-        refreshFailed = refreshFailed,
-    )
+    private fun ContentReleaseEntity.toReadyState(): ContentBootstrapUiState.Ready =
+        ContentBootstrapUiState.Ready(
+            releaseId = releaseId,
+            questionCount = questionCount,
+            isRefreshing = false,
+        )
 
     private companion object {
         const val GERMAN_LANGUAGE_CODE = "de"

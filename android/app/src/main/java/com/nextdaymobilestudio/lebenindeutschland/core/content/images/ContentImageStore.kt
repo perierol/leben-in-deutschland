@@ -10,6 +10,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.security.MessageDigest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
 /** Makes the images a content release references available before it is activated. */
@@ -34,7 +35,11 @@ class ContentImageStore(
     private val download: suspend (url: String) -> ByteArray = { url -> downloadHttps(url) },
 ) : ContentImageInstaller {
     override suspend fun install(images: Collection<ContentImage>) = withContext(Dispatchers.IO) {
-        images.distinctBy(ContentImage::sha256).forEach { image -> installImage(image) }
+        images.distinctBy(ContentImage::sha256).forEach { image ->
+            // Downloads block their thread, so a cancelled or timed-out refresh stops here.
+            ensureActive()
+            installImage(image)
+        }
     }
 
     private suspend fun installImage(image: ContentImage) {

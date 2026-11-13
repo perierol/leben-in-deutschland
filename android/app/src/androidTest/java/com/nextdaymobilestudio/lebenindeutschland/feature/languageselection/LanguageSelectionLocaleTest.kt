@@ -112,7 +112,14 @@ class LanguageSelectionLocaleTest {
             .onNodeWithTag(StateSelectionTestTags.CONTINUE)
             .performClick()
 
-        waitForTag(HomeTestTags.SCREEN)
+        // On a clean install Home waits for anonymous sign-in and the first content
+        // download from Firebase, which can take longer than the shared 10-second wait.
+        composeRule.waitUntil(timeoutMillis = FIRST_INSTALL_HOME_TIMEOUT_MILLIS) {
+            composeRule
+                .onAllNodesWithTag(HomeTestTags.SCREEN)
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
         waitForPersistedSelections(languageCode = "de", stateCode = "bw")
         composeRule.activityRule.scenario.recreate()
 
@@ -178,5 +185,9 @@ class LanguageSelectionLocaleTest {
                 .fetchSemanticsNodes()
                 .isNotEmpty()
         }
+    }
+
+    private companion object {
+        const val FIRST_INSTALL_HOME_TIMEOUT_MILLIS = 30_000L
     }
 }
