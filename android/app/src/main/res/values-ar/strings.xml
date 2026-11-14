@@ -98,6 +98,7 @@
     <string name="settings_title">الإعدادات</string>
     <string name="settings_description">غيّر لغتك أو ولايتك الاتحادية.</string>
     <string name="settings_progress_note">يُحفظ تقدمك الدراسي بشكل منفصل لكل اختيار للغة والولاية. يؤدي تغيير الاختيار إلى حذف الاختبار التجريبي المحفوظ.</string>
+    <string name="settings_privacy_options">خيارات الخصوصية</string>
     <string name="home_exam_history">سجل الاختبارات</string>
     <string name="exam_history_title">سجل الاختبارات</string>
     <string name="exam_history_empty_title">لا توجد اختبارات بعد</string>

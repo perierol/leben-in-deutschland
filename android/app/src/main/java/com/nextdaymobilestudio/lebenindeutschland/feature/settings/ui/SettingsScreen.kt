@@ -48,6 +48,8 @@ fun SettingsScreen(
     onChangeLanguage: () -> Unit,
     onChangeState: () -> Unit,
     modifier: Modifier = Modifier,
+    showPrivacyOptions: Boolean = false,
+    onOpenPrivacyOptions: () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier
@@ -83,6 +85,14 @@ fun SettingsScreen(
                 testTag = SettingsTestTags.STATE,
                 onClick = onChangeState,
             )
+            // Required by Google's consent rules when the learner's region needs it.
+            if (showPrivacyOptions) {
+                SettingsActionRow(
+                    label = stringResource(R.string.settings_privacy_options),
+                    testTag = SettingsTestTags.PRIVACY_OPTIONS,
+                    onClick = onOpenPrivacyOptions,
+                )
+            }
 
             Surface(
                 modifier = Modifier
@@ -177,6 +187,43 @@ private fun SettingsSelectionRow(
                     fontWeight = FontWeight.SemiBold,
                 )
             }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(28.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingsActionRow(
+    label: String,
+    testTag: String,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(testTag)
+            .clickable(role = Role.Button, onClick = onClick),
+        shape = RoundedCornerShape(18.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 2.dp,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(
+                text = label,
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,

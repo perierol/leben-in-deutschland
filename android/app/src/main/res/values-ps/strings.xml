@@ -98,6 +98,7 @@
     <string name="settings_title">امستنې</string>
     <string name="settings_description">خپله ژبه یا ایالت بدل کړئ.</string>
     <string name="settings_progress_note">د زده کړې پرمختګ د هرې ژبې او ایالت لپاره جلا ساتل کېږي. د ټاکنې بدلول خوندي شوې ازمایښتي ازموینه ړنګوي.</string>
+    <string name="settings_privacy_options">د محرمیت اختیارونه</string>
     <string name="home_exam_history">د ازموینو تاریخ</string>
     <string name="exam_history_title">د ازموینو تاریخ</string>
     <string name="exam_history_empty_title">تر اوسه ازموینه نشته</string>

@@ -98,6 +98,7 @@
     <string name="settings_title">Beállítások</string>
     <string name="settings_description">Módosítsa a nyelvet vagy a tartományt.</string>
     <string name="settings_progress_note">A tanulási előrehaladás nyelvenként és tartományonként külön tárolódik. A választás módosítása törli a mentett próbavizsgát.</string>
+    <string name="settings_privacy_options">Adatvédelmi beállítások</string>
     <string name="home_exam_history">Vizsgaelőzmények</string>
     <string name="exam_history_title">Vizsgaelőzmények</string>
     <string name="exam_history_empty_title">Még nincs vizsga</string>

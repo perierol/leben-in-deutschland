@@ -98,6 +98,7 @@
     <string name="settings_title">Ustawienia</string>
     <string name="settings_description">Zmień język lub kraj związkowy.</string>
     <string name="settings_progress_note">Postęp jest zapisywany osobno dla każdego języka i kraju związkowego. Zmiana wyboru usuwa zapisany egzamin próbny.</string>
+    <string name="settings_privacy_options">Opcje prywatności</string>
     <string name="home_exam_history">Historia egzaminów</string>
     <string name="exam_history_title">Historia egzaminów</string>
     <string name="exam_history_empty_title">Brak egzaminów</string>

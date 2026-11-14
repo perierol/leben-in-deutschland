@@ -17,6 +17,17 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+// AdMob IDs. Debug builds always use Google's published test IDs, so development
+// never requests live ads. Release builds read the real IDs from Gradle properties
+// (for example ~/.gradle/gradle.properties or ORG_GRADLE_PROJECT_* variables), which
+// are never committed. validateReleaseAdMobIds stops a release build that lacks them
+// or that would ship a test ID.
+val googleTestAdMobAppId = "ca-app-pub-3940256099942544~3347511713"
+val googleTestQuestionDetailBannerId = "ca-app-pub-3940256099942544/9214589741"
+val releaseAdMobAppId = providers.gradleProperty("lid.admob.appId").orElse("")
+val releaseQuestionDetailBannerId =
+    providers.gradleProperty("lid.admob.questionDetailBannerId").orElse("")
+
 android {
     namespace = "com.nextdaymobilestudio.lebenindeutschland"
     compileSdk {
@@ -30,11 +41,27 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Starts instrumented tests with ads disabled, so no test makes an ad request.
+        testInstrumentationRunner =
+            "com.nextdaymobilestudio.lebenindeutschland.testing.AdsDisabledTestRunner"
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders["admobAppId"] = googleTestAdMobAppId
+            buildConfigField(
+                "String",
+                "ADMOB_QUESTION_DETAIL_BANNER_ID",
+                "\"$googleTestQuestionDetailBannerId\"",
+            )
+        }
         release {
+            manifestPlaceholders["admobAppId"] = releaseAdMobAppId.get()
+            buildConfigField(
+                "String",
+                "ADMOB_QUESTION_DETAIL_BANNER_ID",
+                "\"${releaseQuestionDetailBannerId.get()}\"",
+            )
             optimization {
                 enable = true
                 packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
@@ -46,11 +73,41 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     androidResources {
         generateLocaleConfig = true
     }
+}
+
+val validateReleaseAdMobIds by tasks.registering {
+    description = "Fails a release build without real AdMob IDs or with Google's test IDs."
+    val appId = releaseAdMobAppId
+    val bannerId = releaseQuestionDetailBannerId
+    doLast {
+        val problems = buildList {
+            if (!Regex("""ca-app-pub-\d{16}~\d{10}""").matches(appId.get())) {
+                add("lid.admob.appId must be an AdMob app ID (ca-app-pub-…~…)")
+            }
+            if (!Regex("""ca-app-pub-\d{16}/\d{10}""").matches(bannerId.get())) {
+                add("lid.admob.questionDetailBannerId must be an AdMob ad unit ID (ca-app-pub-…/…)")
+            }
+            if (listOf(appId.get(), bannerId.get()).any { it.startsWith("ca-app-pub-3940256099942544") }) {
+                add("release builds must not use Google's test AdMob IDs")
+            }
+        }
+        if (problems.isNotEmpty()) {
+            throw GradleException(
+                "Release AdMob configuration is invalid:\n- " + problems.joinToString("\n- ") +
+                    "\nSet the properties in ~/.gradle/gradle.properties; never commit them.",
+            )
+        }
+    }
+}
+
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    dependsOn(validateReleaseAdMobIds)
 }
 
 // firebase-auth 25.x carries Kotlin 2.4 metadata while this module compiles with
@@ -86,6 +143,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.google.mobile.ads)
+    implementation(libs.google.user.messaging.platform)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
     ksp(libs.androidx.room.compiler)

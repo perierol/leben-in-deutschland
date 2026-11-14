@@ -9,6 +9,8 @@ fun SettingsRoute(
     onBack: () -> Unit,
     onChangeLanguage: () -> Unit,
     onChangeState: () -> Unit,
+    showPrivacyOptions: Boolean = false,
+    onOpenPrivacyOptions: () -> Unit = {},
 ) {
     SettingsScreen(
         languageName = languageName,
@@ -16,5 +18,7 @@ fun SettingsRoute(
         onBack = onBack,
         onChangeLanguage = onChangeLanguage,
         onChangeState = onChangeState,
+        showPrivacyOptions = showPrivacyOptions,
+        onOpenPrivacyOptions = onOpenPrivacyOptions,
     )
 }

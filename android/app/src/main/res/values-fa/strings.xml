@@ -98,6 +98,7 @@
     <string name="settings_title">تنظیمات</string>
     <string name="settings_description">زبان یا ایالت خود را تغییر دهید.</string>
     <string name="settings_progress_note">پیشرفت مطالعه برای هر انتخاب زبان و ایالت جداگانه ذخیره می‌شود. تغییر انتخاب، آزمون آزمایشی ذخیره‌شده را حذف می‌کند.</string>
+    <string name="settings_privacy_options">گزینه‌های حریم خصوصی</string>
     <string name="home_exam_history">تاریخچه آزمون‌ها</string>
     <string name="exam_history_title">تاریخچه آزمون‌ها</string>
     <string name="exam_history_empty_title">هنوز آزمونی وجود ندارد</string>

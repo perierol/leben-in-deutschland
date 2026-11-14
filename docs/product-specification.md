@@ -489,7 +489,7 @@ The following are outside the first-release scope:
 - Email/password authentication
 - Google or Apple login
 - Payments or subscriptions
-- Advertisements
+- Advertisements other than the single practice-question banner described in ADR 0014
 - Social features
 - Leaderboards
 - Administrator web console

@@ -98,6 +98,7 @@
     <string name="settings_title">Ρυθμίσεις</string>
     <string name="settings_description">Αλλάξτε τη γλώσσα ή το ομόσπονδο κρατίδιό σας.</string>
     <string name="settings_progress_note">Η πρόοδος μελέτης αποθηκεύεται ξεχωριστά για κάθε επιλογή γλώσσας και κρατιδίου. Η αλλαγή επιλογής διαγράφει την αποθηκευμένη δοκιμαστική εξέταση.</string>
+    <string name="settings_privacy_options">Επιλογές απορρήτου</string>
     <string name="home_exam_history">Ιστορικό εξετάσεων</string>
     <string name="exam_history_title">Ιστορικό εξετάσεων</string>
     <string name="exam_history_empty_title">Δεν υπάρχουν ακόμη εξετάσεις</string>

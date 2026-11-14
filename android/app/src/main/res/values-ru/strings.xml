@@ -98,6 +98,7 @@
     <string name="settings_title">Настройки</string>
     <string name="settings_description">Измените язык или федеральную землю.</string>
     <string name="settings_progress_note">Прогресс сохраняется отдельно для каждого языка и федеральной земли. Изменение выбора удаляет сохранённый пробный экзамен.</string>
+    <string name="settings_privacy_options">Параметры конфиденциальности</string>
     <string name="home_exam_history">История экзаменов</string>
     <string name="exam_history_title">История экзаменов</string>
     <string name="exam_history_empty_title">Экзаменов пока нет</string>

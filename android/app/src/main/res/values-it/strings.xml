@@ -98,6 +98,7 @@
     <string name="settings_title">Impostazioni</string>
     <string name="settings_description">Cambia la lingua o lo stato federale.</string>
     <string name="settings_progress_note">I progressi vengono salvati separatamente per ogni lingua e stato. La modifica di una selezione elimina l’esame simulato salvato.</string>
+    <string name="settings_privacy_options">Opzioni sulla privacy</string>
     <string name="home_exam_history">Cronologia esami</string>
     <string name="exam_history_title">Cronologia esami</string>
     <string name="exam_history_empty_title">Nessun esame ancora</string>

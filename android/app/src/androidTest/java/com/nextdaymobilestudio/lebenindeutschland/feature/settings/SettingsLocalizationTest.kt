@@ -53,6 +53,7 @@ class SettingsLocalizationTest {
             R.string.settings_title,
             R.string.settings_description,
             R.string.settings_progress_note,
+            R.string.settings_privacy_options,
         )
     }
 }
