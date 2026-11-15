@@ -1,0 +1,402 @@
+{
+  "sourceLanguage": "de",
+  "strings": {
+    "home_content_not_installed": {
+      "comment": "Temporary iOS foundation placeholder. Remove once content download exists. Languages other than de/en show German until translated.",
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "bs": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The iOS study features are being prepared."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "ku": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "ps": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "sq": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "sr-Latn": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lernfunktionen für iOS sind in Vorbereitung."
+          }
+        }
+      }
+    },
+    "home_questions_available": {
+      "comment": "Copied from Android home_questions_available. Argument: installed question count.",
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld سؤالًا متاحًا"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Налични въпроси: %1$lld"
+          }
+        },
+        "bs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostupno pitanja: %1$lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld Fragen verfügbar"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Διαθέσιμες ερωτήσεις: %1$lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld questions available"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld preguntas disponibles"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld پرسش در دسترس است"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld questions disponibles"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostupno pitanja: %1$lld"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld kérdés érhető el"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld domande disponibili"
+          }
+        },
+        "ku": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld pirs hene"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostępnych pytań: %1$lld"
+          }
+        },
+        "ps": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld پوښتنې شته"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld întrebări disponibile"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступно вопросов: %1$lld"
+          }
+        },
+        "sq": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld pyetje të disponueshme"
+          }
+        },
+        "sr-Latn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostupno pitanja: %1$lld"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld soru kullanılabilir"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Доступно запитань: %1$lld"
+          }
+        }
+      }
+    },
+    "home_title": {
+      "comment": "Copied from Android home_title.",
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هل أنت مستعد للتعلّم؟"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готови ли сте да учите?"
+          }
+        },
+        "bs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spremni za učenje?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereit zum Lernen?"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Έτοιμοι για μάθηση;"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready to learn?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Listo para estudiar?"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برای یادگیری آماده‌اید؟"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prêt à étudier ?"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spremni za učenje?"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Készen áll a tanulásra?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pronto per studiare?"
+          }
+        },
+        "ku": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ji bo xwendinê amade yî?"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotowi do nauki?"
+          }
+        },
+        "ps": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زده کړې ته چمتو یاست؟"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sunteți gata să învățați?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готовы учиться?"
+          }
+        },
+        "sq": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gati për të mësuar?"
+          }
+        },
+        "sr-Latn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spremni za učenje?"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çalışmaya hazır mısınız?"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готові навчатися?"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

@@ -8,10 +8,34 @@
 import Testing
 @testable import LebenInDeutschland
 
-struct LebenInDeutschlandTests {
+@MainActor
+struct HomeViewModelTests {
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    private struct FakeContentRepository: ContentRepository {
+        let questionCount: Int?
+
+        func installedQuestionCount() async -> Int? { questionCount }
     }
 
+    @Test func startsLoading() {
+        let viewModel = HomeViewModel(contentRepository: FakeContentRepository(questionCount: nil))
+
+        #expect(viewModel.contentStatus == .loading)
+    }
+
+    @Test func reportsMissingContent() async {
+        let viewModel = HomeViewModel(contentRepository: FakeContentRepository(questionCount: nil))
+
+        await viewModel.load()
+
+        #expect(viewModel.contentStatus == .notInstalled)
+    }
+
+    @Test func reportsInstalledQuestionCount() async {
+        let viewModel = HomeViewModel(contentRepository: FakeContentRepository(questionCount: 460))
+
+        await viewModel.load()
+
+        #expect(viewModel.contentStatus == .installed(questionCount: 460))
+    }
 }
