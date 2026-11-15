@@ -36,7 +36,7 @@ The repository contains:
 ```text
 android/                Android app (single Gradle module :app)
   app/schemas/          Exported Room schemas, one per database version
-ios/                    iOS Xcode project (template skeleton)
+ios/                    iOS SwiftUI app (foundation only, see docs/ios-architecture.md)
 scripts/content/        Content build, validation, AI and Firestore upload tooling (Python)
 docs/
   product-specification.md      Product rules (draft)
@@ -308,12 +308,19 @@ developer cannot rebuild real content without it.
 
 ## iOS app
 
-`ios/LebenInDeutschland.xcodeproj` contains only Xcode's SwiftUI and SwiftData
-starter code: a timestamped `Item` list in `ContentView.swift` and `Item.swift`.
-It also has starter unit and UI test targets. The deployment target is iOS 26.2
-(iPhone and iPad), and the bundle ID is
-`com.nextdaymobilestudio.LebenInDeutschland`. There are no app features, no
-Firebase and no Swift package dependencies.
+`ios/LebenInDeutschland.xcodeproj` contains the iOS foundation: a SwiftUI app
+entry point, an `AppContainer` for initializer-based dependency injection, a
+placeholder home screen with its `@Observable` view model, an in-app interface
+language picker (temporarily on the home screen), and a String Catalog seeded
+from the Android strings in all 21 languages. The deployment target is
+iOS 17.0 (iPhone and iPad), and the bundle ID is
+`com.nextdaymobilestudio.LebenInDeutschland`. There are no study features yet,
+no Firebase and no Swift package dependencies. See
+[`docs/ios-architecture.md`](docs/ios-architecture.md) for the stack and open
+decisions.
+
+Open `ios/LebenInDeutschland.xcodeproj` in Xcode 26 or later, choose an iPhone
+simulator and press Run (⌘R). Run unit tests with ⌘U.
 
 ## Website
 

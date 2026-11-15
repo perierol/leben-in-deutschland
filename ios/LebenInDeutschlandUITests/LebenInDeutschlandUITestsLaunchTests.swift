@@ -9,8 +9,9 @@ import XCTest
 
 final class LebenInDeutschlandUITestsLaunchTests: XCTestCase {
 
+    // One launch is enough; with 21 languages, every configuration means dozens of launches.
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
-        true
+        false
     }
 
     override func setUpWithError() throws {
