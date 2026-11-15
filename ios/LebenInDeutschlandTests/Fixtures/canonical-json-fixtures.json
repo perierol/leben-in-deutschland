@@ -1,0 +1,337 @@
+{
+  "generatedBy": "scripts/content/generate_ios_canonical_json_fixtures.py",
+  "canonicalFunction": "scripts/content/build_schema3.py canonical_bytes, sha256_json",
+  "cases": [
+    {
+      "name": "booleans",
+      "description": "true and false stay booleans and never become 1 or 0.",
+      "input": {
+        "enabled": true,
+        "disabled": false,
+        "flags": [
+          true,
+          false,
+          true
+        ]
+      },
+      "canonical": "{\"disabled\":false,\"enabled\":true,\"flags\":[true,false,true]}",
+      "utf8ByteCount": 59,
+      "sha256": "b6d143f2879dda4133bccc47683ff8746f584f9e2ad1f097d599010636dcde9c"
+    },
+    {
+      "name": "integral-floats",
+      "description": "Whole-number floats keep their decimal point; integers do not gain one.",
+      "input": {
+        "one": 1.0,
+        "zero": 0.0,
+        "negativeZero": -0.0,
+        "hundred": 100.0,
+        "integerOne": 1,
+        "integerZero": 0
+      },
+      "canonical": "{\"hundred\":100.0,\"integerOne\":1,\"integerZero\":0,\"negativeZero\":-0.0,\"one\":1.0,\"zero\":0.0}",
+      "utf8ByteCount": 89,
+      "sha256": "3f9bbcc4a104f0cc874da1d124984545de5e5901be017b09c5ce1ce0c2a6c6a7"
+    },
+    {
+      "name": "fractional-floats",
+      "description": "Shortest round-trip digits, as in real translation match scores.",
+      "input": {
+        "scores": [
+          0.907657,
+          0.9842,
+          0.30000000000000004,
+          123456.789,
+          -2.5
+        ]
+      },
+      "canonical": "{\"scores\":[0.907657,0.9842,0.30000000000000004,123456.789,-2.5]}",
+      "utf8ByteCount": 64,
+      "sha256": "7ad8ec2bcd3239f6567bf011a4e13b8b3926307a3e5c582b9a8dd2670364fa0c"
+    },
+    {
+      "name": "float-exponents",
+      "description": "Python switches to exponent notation below 1e-4 and from 1e16.",
+      "input": {
+        "small": 0.0001,
+        "tiny": 1e-05,
+        "belowLarge": 9500000000000000.0,
+        "large": 1e+16,
+        "big": 1e+22,
+        "largest": 1.7976931348623157e+308,
+        "smallestSubnormal": 5e-324
+      },
+      "canonical": "{\"belowLarge\":9500000000000000.0,\"big\":1e+22,\"large\":1e+16,\"largest\":1.7976931348623157e+308,\"small\":0.0001,\"smallestSubnormal\":5e-324,\"tiny\":1e-05}",
+      "utf8ByteCount": 148,
+      "sha256": "0ec6d9203e050b7fa6c60fac6bc5b025f58a171a91ca98f47609ac0bd11cf040"
+    },
+    {
+      "name": "integers",
+      "description": "64-bit integer range and ordinary values.",
+      "input": {
+        "officialNumber": 301,
+        "negative": -42,
+        "int64Max": 9223372036854775807,
+        "int64Min": -9223372036854775808
+      },
+      "canonical": "{\"int64Max\":9223372036854775807,\"int64Min\":-9223372036854775808,\"negative\":-42,\"officialNumber\":301}",
+      "utf8ByteCount": 100,
+      "sha256": "fdf4d900fa3df96215ddce546cd485eef1a377aa0e67c3cb7d6982952b697970"
+    },
+    {
+      "name": "nested-objects",
+      "description": "Keys are sorted at every level; array order is preserved.",
+      "input": {
+        "z": {
+          "b": [
+            {
+              "y": 1,
+              "x": 2
+            },
+            [],
+            {}
+          ],
+          "a": null
+        },
+        "a": {
+          "c": {
+            "e": "f",
+            "d": "g"
+          }
+        },
+        "M": "uppercase sorts before lowercase"
+      },
+      "canonical": "{\"M\":\"uppercase sorts before lowercase\",\"a\":{\"c\":{\"d\":\"g\",\"e\":\"f\"}},\"z\":{\"a\":null,\"b\":[{\"x\":2,\"y\":1},[],{}]}}",
+      "utf8ByteCount": 109,
+      "sha256": "37280784d43479ebd7307a761efff1924a0416322572823daa352f541f7e0f59"
+    },
+    {
+      "name": "key-ordering",
+      "description": "Keys sort by Unicode code point, not by locale or case-insensitively.",
+      "input": {
+        "b": 1,
+        "a": 2,
+        "B": 3,
+        "A": 4,
+        "_": 5,
+        "1": 6,
+        "10": 7,
+        "2": 8,
+        "aa": 9,
+        "z": 10,
+        "ä": 11,
+        "é": 12,
+        "Ω": 13
+      },
+      "canonical": "{\"1\":6,\"10\":7,\"2\":8,\"A\":4,\"B\":3,\"_\":5,\"a\":2,\"aa\":9,\"b\":1,\"z\":10,\"ä\":11,\"é\":12,\"Ω\":13}",
+      "utf8ByteCount": 88,
+      "sha256": "610e300d839f85c47e8a43972bebddd966d88e9288dfd3b31cbfbe25bc71cfd4"
+    },
+    {
+      "name": "arabic",
+      "description": "Arabic and mixed right-to-left text is written as raw UTF-8.",
+      "input": {
+        "questionText": "هل أنت مستعد للتعلّم؟",
+        "answers": [
+          "نعم",
+          "لا",
+          "ربما"
+        ],
+        "mixed": "Bundesland: برلين (Berlin) 2026"
+      },
+      "canonical": "{\"answers\":[\"نعم\",\"لا\",\"ربما\"],\"mixed\":\"Bundesland: برلين (Berlin) 2026\",\"questionText\":\"هل أنت مستعد للتعلّم؟\"}",
+      "utf8ByteCount": 144,
+      "sha256": "0980d2bb61f6d7d4c9088b1583686b10c726686dd505268d2c911d6d55589c1b"
+    },
+    {
+      "name": "multilingual-text",
+      "description": "Non-ASCII text is never escaped and never Unicode-normalized.",
+      "input": {
+        "german": "„Die Würde des Menschen ist unantastbar.“ – Straße",
+        "turkish": "Çalışmaya hazır mısınız? İğdır",
+        "ukrainian": "Конституція",
+        "greek": "Σύνταγμα",
+        "emoji": "📘✅",
+        "precomposed": "é",
+        "decomposed": "é"
+      },
+      "canonical": "{\"decomposed\":\"é\",\"emoji\":\"📘✅\",\"german\":\"„Die Würde des Menschen ist unantastbar.“ – Straße\",\"greek\":\"Σύνταγμα\",\"precomposed\":\"é\",\"turkish\":\"Çalışmaya hazır mısınız? İğdır\",\"ukrainian\":\"Конституція\"}",
+      "utf8ByteCount": 244,
+      "sha256": "52c1f20eea6e68130e442ccabdb021439e6e1bb07704ab6319eaf2bbf9dc116f"
+    },
+    {
+      "name": "quotes-and-escapes",
+      "description": "Only quotes, backslashes and control characters are escaped.",
+      "input": {
+        "doubleQuote": "Er sagte \"Ja\"",
+        "singleQuote": "it's",
+        "backslash": "C:\\path\\file",
+        "slash": "a/b </script>",
+        "newline": "line1\nline2",
+        "tab": "a\tb",
+        "carriageReturn": "a\r\nb",
+        "backspaceAndFormFeed": "\b\f",
+        "otherControl": "\u0000\u0001\u001f",
+        "delete": "",
+        "lineSeparators": "  ",
+        "typographicQuotes": "„…“ «…» ‚…‘"
+      },
+      "canonical": "{\"backslash\":\"C:\\\\path\\\\file\",\"backspaceAndFormFeed\":\"\\b\\f\",\"carriageReturn\":\"a\\r\\nb\",\"delete\":\"\",\"doubleQuote\":\"Er sagte \\\"Ja\\\"\",\"lineSeparators\":\"  \",\"newline\":\"line1\\nline2\",\"otherControl\":\"\\u0000\\u0001\\u001f\",\"singleQuote\":\"it's\",\"slash\":\"a/b </script>\",\"tab\":\"a\\tb\",\"typographicQuotes\":\"„…“ «…» ‚…‘\"}",
+      "utf8ByteCount": 326,
+      "sha256": "ce5b9d9fb7987b70972a5cc4d8e621dcaac4da54104af700b4980d317e0b4201"
+    },
+    {
+      "name": "empty-values",
+      "description": "Empty containers and strings.",
+      "input": {
+        "emptyObject": {},
+        "emptyArray": [],
+        "emptyString": "",
+        "nested": [
+          [],
+          {},
+          [
+            []
+          ]
+        ]
+      },
+      "canonical": "{\"emptyArray\":[],\"emptyObject\":{},\"emptyString\":\"\",\"nested\":[[],{},[[]]]}",
+      "utf8ByteCount": 73,
+      "sha256": "aa8cc8539c5289af84d3db0e36250dfa1422fb5187a19373d8f869147d97de60"
+    },
+    {
+      "name": "top-level-array",
+      "description": "A top-level array of mixed values, like a chunk's questions list.",
+      "input": [
+        3,
+        "two",
+        1.0,
+        true,
+        null,
+        {
+          "b": 2,
+          "a": 1
+        }
+      ],
+      "canonical": "[3,\"two\",1.0,true,null,{\"a\":1,\"b\":2}]",
+      "utf8ByteCount": 37,
+      "sha256": "39b7d1fc04d89cf98e21c6ea0ae35e7c2a6bc1331cf94c3ea64c3e9da836152c"
+    },
+    {
+      "name": "top-level-string",
+      "description": "A bare string.",
+      "input": "Leben in Deutschland",
+      "canonical": "\"Leben in Deutschland\"",
+      "utf8ByteCount": 22,
+      "sha256": "2809d797214146fa77b13114be86f219c0c1b17e3214f8f501fa3f033d8cb330"
+    },
+    {
+      "name": "top-level-null",
+      "description": "A bare null.",
+      "input": null,
+      "canonical": "null",
+      "utf8ByteCount": 4,
+      "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    },
+    {
+      "name": "question-shaped",
+      "description": "A synthetic question with the schema-3 structure.",
+      "input": [
+        {
+          "id": "q-0021",
+          "correctAnswerId": "c",
+          "metadata": {
+            "sourceId": "21",
+            "officialNumber": 21,
+            "scope": "GENERAL",
+            "stateCode": null,
+            "categoryStatus": "UNCATEGORIZED",
+            "source": {
+              "page": 7,
+              "bamfInternalId": "x-21"
+            }
+          },
+          "german": {
+            "questionText": "Was steht nicht im Grundgesetz?",
+            "answers": [
+              {
+                "id": "a",
+                "text": "Die Würde des Menschen ist unantastbar."
+              },
+              {
+                "id": "b",
+                "text": "Alle sollen gleich viel Geld haben."
+              },
+              {
+                "id": "c",
+                "text": "Jeder Mensch darf seine Meinung sagen."
+              },
+              {
+                "id": "d",
+                "text": "Alle sind vor dem Gesetz gleich."
+              }
+            ],
+            "questionImage": {
+              "storagePath": "images/q-0021.png",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "mimeType": "image/png",
+              "width": 640,
+              "height": 480
+            }
+          },
+          "study": {
+            "languageCode": "ar",
+            "questionText": "ما الذي لا يرد في القانون الأساسي؟",
+            "answers": [
+              {
+                "id": "a",
+                "text": "كرامة الإنسان مصونة."
+              },
+              {
+                "id": "b",
+                "text": "يجب أن يملك الجميع المال نفسه."
+              },
+              {
+                "id": "c",
+                "text": "يحق لكل إنسان أن يقول رأيه."
+              },
+              {
+                "id": "d",
+                "text": "الجميع متساوون أمام القانون."
+              }
+            ],
+            "explanation": "الشرح \"المساعد\" ليس نصًا رسميًا.",
+            "explanationStatus": "AI_GENERATED_NEEDS_REVIEW",
+            "reviewed": false,
+            "audit": {
+              "questionMatchScore": 1.0,
+              "answerSetMatchScore": 0.0,
+              "answerMatchScores": [
+                1.0,
+                0.907657,
+                0.9842,
+                1.0
+              ],
+              "fallbackAnswerIds": []
+            }
+          }
+        }
+      ],
+      "canonical": "[{\"correctAnswerId\":\"c\",\"german\":{\"answers\":[{\"id\":\"a\",\"text\":\"Die Würde des Menschen ist unantastbar.\"},{\"id\":\"b\",\"text\":\"Alle sollen gleich viel Geld haben.\"},{\"id\":\"c\",\"text\":\"Jeder Mensch darf seine Meinung sagen.\"},{\"id\":\"d\",\"text\":\"Alle sind vor dem Gesetz gleich.\"}],\"questionImage\":{\"height\":480,\"mimeType\":\"image/png\",\"sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"storagePath\":\"images/q-0021.png\",\"width\":640},\"questionText\":\"Was steht nicht im Grundgesetz?\"},\"id\":\"q-0021\",\"metadata\":{\"categoryStatus\":\"UNCATEGORIZED\",\"officialNumber\":21,\"scope\":\"GENERAL\",\"source\":{\"bamfInternalId\":\"x-21\",\"page\":7},\"sourceId\":\"21\",\"stateCode\":null},\"study\":{\"answers\":[{\"id\":\"a\",\"text\":\"كرامة الإنسان مصونة.\"},{\"id\":\"b\",\"text\":\"يجب أن يملك الجميع المال نفسه.\"},{\"id\":\"c\",\"text\":\"يحق لكل إنسان أن يقول رأيه.\"},{\"id\":\"d\",\"text\":\"الجميع متساوون أمام القانون.\"}],\"audit\":{\"answerMatchScores\":[1.0,0.907657,0.9842,1.0],\"answerSetMatchScore\":0.0,\"fallbackAnswerIds\":[],\"questionMatchScore\":1.0},\"explanation\":\"الشرح \\\"المساعد\\\" ليس نصًا رسميًا.\",\"explanationStatus\":\"AI_GENERATED_NEEDS_REVIEW\",\"languageCode\":\"ar\",\"questionText\":\"ما الذي لا يرد في القانون الأساسي؟\",\"reviewed\":false}}]",
+      "utf8ByteCount": 1345,
+      "sha256": "70e7bc75ca76487bace04ef9fddc9e3f11bc820c6616654a1bb9e02d4fafac29"
+    },
+    {
+      "name": "package-hashes",
+      "description": "The packageHashes map whose hash is a release's catalogSha256.",
+      "input": {
+        "tr": "1111111111111111111111111111111111111111111111111111111111111111",
+        "de": "2222222222222222222222222222222222222222222222222222222222222222",
+        "ar": "3333333333333333333333333333333333333333333333333333333333333333"
+      },
+      "canonical": "{\"ar\":\"3333333333333333333333333333333333333333333333333333333333333333\",\"de\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"tr\":\"1111111111111111111111111111111111111111111111111111111111111111\"}",
+      "utf8ByteCount": 217,
+      "sha256": "f095bca1cf6a4d433923c40467b3731378f655a1b0e52a7b393ab0f34bb45b2a"
+    }
+  ]
+}
