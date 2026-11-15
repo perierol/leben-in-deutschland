@@ -221,4 +221,7 @@ exponent notation or as long whole numbers (`1e-05`, `1e+16`,
 6. **Ads.** Android shows AdMob banners on practice screens (ADR 0014). It is
    still open whether iOS gets ads, and with which consent flow (App Tracking
    Transparency and UMP).
-7. **iOS CI.** No workflow builds or tests the iOS app yet.
+7. **iOS CI.** `.github/workflows/ios-ci.yml` runs the full test scheme on an
+   iPhone 17 simulator (iOS 26.2) with Xcode 26.2 on `macos-15`. Open: whether
+   to make it a required check. With its `ios/**` path filter, a required check
+   would block PRs that do not touch iOS, because it would never report.
