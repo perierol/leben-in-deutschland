@@ -89,6 +89,76 @@ with `@ModelActor` or `nonisolated` async code.
   String Catalog. It comes from the Firestore schema-3 language packages, as on
   Android.
 
+## Screens and visual design
+
+- **Every screen must match Android's visual design**: layout, typography scale,
+  colors, spacing, component styles and states, including RTL.
+- **Navigation may be iOS-native.** For example, use `NavigationStack` push and
+  back-swipe, sheets, and toolbar placement where Android uses its own
+  patterns. The visual result of each screen still follows Android.
+- The placeholder Home screen and the temporary language picker predate this
+  requirement. They are rebuilt when the real screens are implemented.
+
+## Question content
+
+The iOS app reuses Android's schema-3 content format unchanged (ADR 0002,
+`docs/product-specification.md` §7–§8). Work proceeds in small PRs: canonical
+JSON and hashing (done), validator, SwiftData store, image store, then Firebase.
+
+Decided:
+
+- **Download only the selected language package.** This follows the product
+  specification and ADR 0002. Each package already contains the German original.
+  (Android's code currently also downloads the German package.)
+- **Progress is keyed by stable question ID** (ADR 0002), not by release, so a
+  new content release keeps the learner's progress. This avoids Android audit
+  finding F-02.
+- **The active content stays usable until its replacement is fully validated
+  and activated.** Nothing is written locally before validation, and a failed or
+  cancelled download leaves the current content in place.
+
+Not decided:
+
+- **Removing superseded releases.** Before implementing release cleanup, explain
+  its effect on offline language switching (an installed package of another
+  language, or of an older release, could be lost) and get the owner's review of
+  that decision.
+
+### Canonical JSON and hashes
+
+Every schema-3 hash is SHA-256 over canonical JSON text, produced by the
+publisher's `json.dumps(value, ensure_ascii=False, sort_keys=True,
+separators=(",", ":"))` in `scripts/content/build_schema3.py`. iOS reproduces it
+in `Core/Content/Sync/CanonicalJSON.swift`:
+
+- `NSNumber` values from Firestore are told apart by their Core Foundation type,
+  so `true` never becomes `1` and `1.0` never becomes `1`.
+- Keys are sorted by Unicode code point. Strings are never normalized, and only
+  quotes, backslashes and control characters are escaped.
+- Floats use Python's `repr` layout: shortest round-trip digits, with exponent
+  notation below 1e-4 and from 1e16.
+- `NaN` and infinity are rejected, as on Android.
+
+Expected outputs come from the publisher itself:
+`scripts/content/generate_ios_canonical_json_fixtures.py` writes
+`ios/LebenInDeutschlandTests/Fixtures/canonical-json-fixtures.json`. A Python
+test fails if the publisher's encoding changes without regenerating the
+fixtures. An optional iOS test recomputes every hash of a release generated
+locally:
+
+```bash
+TEST_RUNNER_LID_SCHEMA3_RELEASE_DIR=<path to generated schema-3 release> \
+  xcodebuild -project ios/LebenInDeutschland.xcodeproj -scheme LebenInDeutschland \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -only-testing:'LebenInDeutschlandTests/CanonicalJSONTests/reproducesEveryHashOfAGeneratedRelease()' test
+```
+
+Cross-platform note: Android's `CanonicalJson.kt` formats floats with Kotlin's
+`Double.toString`, which differs from Python for values that Python writes in
+exponent notation or as long whole numbers (`1e-05`, `1e+16`,
+`9500000000000000.0`). Current releases contain no such values (checked
+2026-11-15), so no release is affected today.
+
 ## Decisions that need confirmation
 
 1. **In-app language selection.** Android lets users choose the interface

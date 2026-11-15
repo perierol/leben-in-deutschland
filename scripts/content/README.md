@@ -23,6 +23,19 @@ python3 -m unittest discover \
   -v
 ```
 
+## Regenerate the iOS Canonical JSON Fixtures
+
+The iOS app recomputes release hashes and must match `canonical_bytes` and
+`sha256_json` byte for byte. Its expected values come from this script:
+
+```bash
+python3 scripts/content/generate_ios_canonical_json_fixtures.py
+```
+
+It writes `ios/LebenInDeutschlandTests/Fixtures/canonical-json-fixtures.json`.
+`test_ios_canonical_json_fixtures.py` fails when the committed file no longer
+matches the publisher's encoding.
+
 ## Build the Current Catalog as a Draft
 
 The current schema-2 catalog contains incomplete explanations, so the first
