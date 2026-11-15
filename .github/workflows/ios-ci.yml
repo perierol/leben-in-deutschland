@@ -1,0 +1,107 @@
+name: iOS CI
+
+on:
+  pull_request:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-ci.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build and test (iPhone 17, iOS 26.2)
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    env:
+      # The runner's default Xcode is older; use the version the project is built with.
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+      DESTINATION: platform=iOS Simulator,name=iPhone 17,OS=26.2
+      RESULT_BUNDLE: ${{ github.workspace }}/build/LebenInDeutschland.xcresult
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Show Xcode and simulators
+        run: |
+          xcodebuild -version
+          xcodebuild -version | grep -qx "Xcode 26.2"
+          xcrun simctl list runtimes
+          xcrun simctl list devices available "iOS 26.2"
+
+      # Simulator builds need no signing identity, provisioning profile or Firebase
+      # configuration.
+      - name: Build and run tests
+        run: |
+          xcodebuild test \
+            -project ios/LebenInDeutschland.xcodeproj \
+            -scheme LebenInDeutschland \
+            -destination "$DESTINATION" \
+            -resultBundlePath "$RESULT_BUNDLE" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Summarize test results
+        if: ${{ !cancelled() && hashFiles('build/LebenInDeutschland.xcresult/Info.plist') != '' }}
+        run: |
+          xcrun xcresulttool get test-results summary --path "$RESULT_BUNDLE" --compact > build/summary.json
+          xcrun xcresulttool get test-results tests --path "$RESULT_BUNDLE" --compact > build/tests.json
+          python3 - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          import json
+
+          summary = json.load(open("build/summary.json"))
+          tree = json.load(open("build/tests.json"))
+
+          def test_cases(node):
+              if node.get("nodeType") == "Test Case":
+                  yield node
+              for child in node.get("children", []):
+                  yield from test_cases(child)
+
+          def messages(node):
+              return [child["name"] for child in node.get("children", []) if child.get("nodeType") == "Failure Message"]
+
+          cases = [case for root in tree["testNodes"] for case in test_cases(root)]
+          print(f"## iOS tests: {summary['result']}")
+          print()
+          print("| Total | Passed | Failed | Skipped | Expected failures |")
+          print("|---|---|---|---|---|")
+          print(f"| {summary['totalTestCount']} | {summary['passedTests']} | {summary['failedTests']} "
+                f"| {summary['skippedTests']} | {summary['expectedFailures']} |")
+          for config in summary.get("devicesAndConfigurations", []):
+              device = config["device"]
+              print()
+              print(f"Device: {device['deviceName']}, {device['platform']} {device['osVersion']} ({device['osBuildNumber']})")
+
+          for title, result in (("Skipped", "Skipped"), ("Failed", "Failed")):
+              matching = [case for case in cases if case.get("result") == result]
+              if matching:
+                  print()
+                  print(f"### {title}")
+                  for case in matching:
+                      detail = "; ".join(messages(case)) or "no message"
+                      print(f"- `{case['nodeIdentifier']}`: {detail}")
+          EOF
+
+      - name: Upload result bundle
+        if: ${{ failure() && hashFiles('build/LebenInDeutschland.xcresult/Info.plist') != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: LebenInDeutschland-xcresult-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/LebenInDeutschland.xcresult
+          retention-days: 14

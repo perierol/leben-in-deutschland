@@ -1,6 +1,7 @@
 # Leben in Deutschland
 
 [![Android CI](https://github.com/perierol/leben-in-deutschland/actions/workflows/android-ci.yml/badge.svg)](https://github.com/perierol/leben-in-deutschland/actions/workflows/android-ci.yml)
+[![iOS CI](https://github.com/perierol/leben-in-deutschland/actions/workflows/ios-ci.yml/badge.svg)](https://github.com/perierol/leben-in-deutschland/actions/workflows/ios-ci.yml)
 
 A multilingual, offline-first study app for Germany's *Leben in Deutschland* and
 naturalization tests. You learn from the official German questions, with a
@@ -46,7 +47,7 @@ docs/
 website/                Static site deployed with Netlify (netlify.toml)
 firestore.rules         Cloud Firestore security rules
 firebase.json           Firebase CLI configuration (deploys firestore.rules)
-.github/workflows/      Android CI and content-pipeline CI
+.github/workflows/      Android, iOS and content-pipeline CI
 .claude/                Claude Code agents, skills and tools used for review and verification
 ```
 
@@ -277,8 +278,16 @@ run skips it when that content is missing.
 - **Content Pipeline CI** (`.github/workflows/content-pipeline-ci.yml`) runs on
   changes to `scripts/content/**`. It compiles the scripts, runs the unit tests,
   and builds and validates a fixture catalogue on Python 3.13.
+- **iOS CI** (`.github/workflows/ios-ci.yml`) runs on pull requests and on
+  pushes to `main` that touch `ios/**` or the workflow file, and can be started
+  manually. On `macos-15` with Xcode 26.2 it runs the `LebenInDeutschland`
+  scheme's unit and UI tests on an iPhone 17 simulator (iOS 26.2), without
+  signing or Firebase configuration. The job summary lists passed, failed and
+  skipped tests with skip reasons. A failed run uploads the `.xcresult` bundle
+  as an artifact. The generated-release hash test is skipped there because CI
+  has no generated release.
 
-There is no release automation and no iOS CI.
+There is no release automation.
 
 ## Content pipeline
 
